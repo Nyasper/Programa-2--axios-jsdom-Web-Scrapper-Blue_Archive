@@ -1,22 +1,22 @@
 import Database from 'better-sqlite3';
 
 const options = {
-  readonly : false,
+  readonly: false,
   fileMustExist: true, // if the database does not exist, an Error will be thrown instead of creating a new file.
-  timeout:5000, //the number of milliseconds to wait when executing queries on a locked database, before throwing a SQLITE_BUSY error (default: 5000).
-  verbose:null //provide a function that gets called with every SQL string executed by the database connection (default: null).
+  timeout: 5000, //the number of milliseconds to wait when executing queries on a locked database, before throwing a SQLITE_BUSY error (default: 5000).
+  verbose: null //provide a function that gets called with every SQL string executed by the database connection (default: null).
 }
 
 
 const rutaActual = dirname(fileURLToPath(import.meta.url));
 
 
-export const db = new Database(join(rutaActual,'BlueArchiveDB.sqlite'), options);
+export const db = new Database(join(rutaActual, 'BlueArchiveDB.sqlite'), options);
 db.pragma('cache_size = 32000');
 
 
 
-export const getAllCharaNames = async()=> {
+export const getAllCharaNames = async () => {
 
   try {
 
@@ -25,12 +25,12 @@ export const getAllCharaNames = async()=> {
     return row
 
   } catch (error) {
-    console.error('Error al Ejecutar Consulta de Sqlite.',error)
+    console.error('Error al Ejecutar Consulta de Sqlite.', error)
   }
 
 }
 
-export async function getAllCharasSqlite(){
+export async function getAllCharasSqlite() {
   try {
 
     const query = db.prepare('SELECT * FROM students ORDER BY charaName')
@@ -38,15 +38,15 @@ export async function getAllCharasSqlite(){
     return row
 
   } catch (error) {
-    console.error('Error al Ejecutar Consulta de Sqlite.',error)
+    console.error('Error al Ejecutar Consulta de Sqlite.', error)
   }
 
 }
 
 
-export async function insertCharaSqlite( chara ){
-  if (chara.files === false ) chara.files = 0
-  else if (chara.files === true ) chara.files = 1
+export async function insertCharaSqlite(chara) {
+  if (chara.files === false) chara.files = 0
+  else if (chara.files === true) chara.files = 1
 
   try {
 
@@ -58,36 +58,36 @@ export async function insertCharaSqlite( chara ){
     ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
   `);
 
-  query.run(
-    chara.charaName,
-    chara.name == null ? null : chara.name,
-    chara.lastName === null ? null : chara.lastName,
-    chara.school === null ? null : chara.school,
-    chara.role === null ? null : chara.role,
-    chara.combatClass === null ? null : chara.combatClass,
-    chara.weaponType === null ? null : chara.weaponType,
-    chara.age === null ? null : chara.age,
-    chara.birthday === null ? null : chara.birthday,
-    chara.height === null ? null : chara.height,
-    chara.hobbies === null ? null : chara.hobbies,
-    chara.designer === null ? null : chara.designer,
-    chara.illustrator === null ? null : chara.illustrator,
-    chara.voice === null ? null : chara.voice,
-    chara.releaseDate === null ? null : chara.releaseDate,
-    chara.url === null ? null : chara.url,
-    chara.files
-  );
-    
+    query.run(
+      chara.charaName,
+      chara.name == null ? null : chara.name,
+      chara.lastName === null ? null : chara.lastName,
+      chara.school === null ? null : chara.school,
+      chara.role === null ? null : chara.role,
+      chara.combatClass === null ? null : chara.combatClass,
+      chara.weaponType === null ? null : chara.weaponType,
+      chara.age === null ? null : chara.age,
+      chara.birthday === null ? null : chara.birthday,
+      chara.height === null ? null : chara.height,
+      chara.hobbies === null ? null : chara.hobbies,
+      chara.designer === null ? null : chara.designer,
+      chara.illustrator === null ? null : chara.illustrator,
+      chara.voice === null ? null : chara.voice,
+      chara.releaseDate === null ? null : chara.releaseDate,
+      chara.url === null ? null : chara.url,
+      chara.files
+    );
+
     console.log(`\n💚 ${chara.charaName} 💚\n`)
-    
+
   } catch (error) {
-    console.error('\nError al Ejecutar Consulta de Sqlite:\n',error)
+    console.error('\nError al Ejecutar Consulta de Sqlite:\n', error)
   }
 
 }
 
 
-export async function getFilesUpdatesSqlite(){
+export async function getFilesUpdatesSqlite() {
   try {
 
     const query = db.prepare('SELECT * FROM students WHERE NOT files ORDER BY charaName');
@@ -95,24 +95,28 @@ export async function getFilesUpdatesSqlite(){
     return row
 
   } catch (error) {
-    console.error('Error al Ejecutar Consulta de Sqlite.',error)
+    console.error('Error al Ejecutar Consulta de Sqlite.', error)
   }
 
 }
 
-export async function updateCharaFileSqlite( charaName ){
+export async function updateCharaFileSqlite(charaName) {
 
-    try {
-      const query = db.prepare(`UPDATE students SET files = true WHERE charaName = ?`);
-      query.run(charaName);
+  try {
+    const query = db.prepare(`UPDATE students SET files = true WHERE charaName = ?`);
+    query.run(charaName);
 
-      console.log(`\n💚 ${charaName} Completado 💚\n`);
+    console.log(`\n💚 ${charaName} Completado 💚\n`);
 
-    } catch (error) {
-      console.error('\nError al Ejecutar Consulta de Sqlite:\n', error);
-    }
+  } catch (error) {
+    console.error('\nError al Ejecutar Consulta de Sqlite:\n', error);
+  }
 
 }
+
+
+(await getAllCharaNames()).forEach(chara => console.log(chara));
+
 /*
 const consulta = await sqliteQuery('Select * from students')
 if (consulta){
@@ -182,4 +186,4 @@ const createTables = async() => {
 }
 */
 import { fileURLToPath } from 'url';
-import { dirname , join } from 'path';
+import { dirname, join } from 'path';
