@@ -89,6 +89,6 @@ import scanCharaList from "./func/scanCharaList.js";
 import searchUpdates from "./func/searchUpdates.js";
 import scanCharaInfo from "./func/scanCharaInfo.js"
 import { insertCharaSqlite } from "./db/sqlite.js";
-import { actualizarPostgresSqldesdeSqlite, actualizarMongoDBdesdeSqlite } from "./db/sincronizarDBs.js";
+import { actualizarPostgresSqldesdeSqlite, actualizarMongoDBdesdeSqlite } from "./db/sincronizarDB.js";
 import runPuppeteer from "./func/puppeteer.js"
 import readline from 'readline';

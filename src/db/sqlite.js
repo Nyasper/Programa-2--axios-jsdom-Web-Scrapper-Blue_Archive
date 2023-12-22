@@ -114,9 +114,6 @@ export async function updateCharaFileSqlite(charaName) {
 
 }
 
-
-(await getAllCharaNames()).forEach(chara => console.log(chara));
-
 /*
 const consulta = await sqliteQuery('Select * from students')
 if (consulta){
