@@ -114,6 +114,9 @@ export async function updateCharaFileSqlite(charaName) {
 
 }
 
+
+
+export const closeSqlite = () => db.close()
 /*
 const consulta = await sqliteQuery('Select * from students')
 if (consulta){

@@ -43,7 +43,8 @@ export default async function searchUpdates() {
   } catch (error) {
     console.error("\nSe ha producido un error en la funcion 'searchUpdates'\n", error)
   }
+
 }
 
 import scanCharaList from "./scanCharaList.js"
-import { getAllCharaNames } from "../db/sqlite.js"
+import { getAllCharaNames, closeSqlite } from "../db/sqlite.js"

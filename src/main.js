@@ -28,11 +28,16 @@ async function Buscar_Actualizaciones(opcion) {
 
     }
 
+
   }
 
 
   catch (error) {
     console.error('Se ha producido un error en la funcion Buscar_Actualizaciones en main.js')
+  }
+
+  finally {
+    closeSqlite()
   }
 
 }
@@ -84,11 +89,10 @@ function userPrompt() {
 }
 
 
-
 import scanCharaList from "./func/scanCharaList.js";
 import searchUpdates from "./func/searchUpdates.js";
 import scanCharaInfo from "./func/scanCharaInfo.js"
-import { insertCharaSqlite } from "./db/sqlite.js";
+import { insertCharaSqlite, closeSqlite } from "./db/sqlite.js";
 import { actualizarPostgresSqldesdeSqlite, actualizarMongoDBdesdeSqlite } from "./db/sincronizarDB.js";
 import runPuppeteer from "./func/puppeteer.js"
 import readline from 'readline';

@@ -8,13 +8,8 @@ export default async function scanCharaList() {
 
   try {
 
-
-    const data = await getDATACharaInfo('https://bluearchive.wiki/wiki/Characters')
-
-
-
     //JSDOM
-    const dom = new JSDOM(data);
+    const dom = new JSDOM(await getDATACharaInfo('https://bluearchive.wiki/wiki/Characters'), { resources: 'usable' });
     const $selectElement = (selector) => dom.window.document.querySelector(selector);
 
 
