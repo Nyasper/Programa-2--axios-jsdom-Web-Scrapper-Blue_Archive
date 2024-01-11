@@ -1,107 +1,183 @@
-//Usuario y Contraseña
-dotenv.config({ path: ".env" });
-
+const rutaActual = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: `${rutaActual}/.env` });
 
 //Student Schema
-const StudentSchema = new Schema({
-  charaName: String,
-  name: String,
-  lastName: String,
-  school: String,
-  role: String,
-  combatClass: String,
-  weaponType: String,
-  age: Number,
-  birthday: String,
-  height: Number,
-  hobbies: String,
-  designer: String,
-  illustrator: String,
-  voice: String,
-  releaseDate: String,
-  url: String,
-  files: Boolean
+const studentSchema = new Schema({
+  charaName: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String
+  },
+  school: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String
+  },
+  combatClass: {
+    type: String
+  },
+  weaponType: {
+    type: String
+  },
+  age: {
+    type: Number,
+    default: null
+  },
+  birthday: {
+    type: String
+  },
+  height: {
+    type: Number,
+    default: null
+  },
+  hobbies: {
+    type: String
+  },
+  designer: {
+    type: String
+  },
+  illustrator: {
+    type: String
+  },
+  voice: {
+    type: String
+  },
+  releaseDate: {
+    type: String
+  },
+  pageUrl: {
+    type: String
+  },
+  pageImageProfileUrl: {
+    type: String
+  },
+  pageImageFullUrl: {
+    type: String
+  },
+  audioUrl: {
+    type: String
+  },
+  localImageProfileSrc: {
+    type: String
+  },
+  localImageFullSrc: {
+    type: String
+  },
+  localAudioSrc: {
+    type: String
+  },
+  files: {
+    type: Boolean,
+    default: false
+  }
 }, {
   versionKey: false
-})
+});
 
-export const Student = model('Student', StudentSchema)
+const Student = model('students', studentSchema);
 
 //Conectar
-export async function conectarMongoDB() {
+try {
+  await connect(process.env.MONGODB_URI);
+} catch (error) {
+  console.log('\nError al intentar conectar a MongoDB\n', error);
+}
+
+
+//CREATE
+export const saveOneCharaMongoDB = async (chara) => {
+
   try {
-    await connect(
-      process.env.URI
-    );
+
+    await new Student(chara).save()
+    console.log(`\n💚 ${chara.charaName} 💚\n`) //Guardar en MongoDB
+
   } catch (error) {
-    console.log('\nError al intentar conectar a MongoDB\n', error);
+    console.error(`\nError al intentar INSERTAR "${chara.charaName} en MongoDB"\n`, error)
+  }
+
+}
+
+export const saveManyCharasMongoDB = async (charas) => {
+
+  try {
+
+    const saveAllStudents = await Student.insertMany(charas)
+    console.log(`\n💚 INSERTADO ${saveAllStudents.length} Personajes en la Coleccion "students" en MongoDB💚\n`)
+
+  } catch (error) {
+    console.error('\nError al intentar INSERTAR todos los personajes en la coleccion "students" en MongoDB\n', error)
+  }
+
+}
+
+
+
+
+//READ
+export const getOneCharaMongoDB = async (charaName) => {
+
+  try {
+    return await Student.findOne({ charaName })
+  } catch (error) {
+    console.error(`\nERROR al intentar OBTENER "${charaName}" desde MongoDB\n`, error)
   }
 }
 
-//Querys / Consultas
-export const guardarMongoDB = async (chara) => {
-  await new Student(chara).save()
-  console.log(`\n💚 ${chara.charaName} 💚\n`) //Guardar en MongoDB
-}
+export const getAllCharasMongoDB = async () => {
 
-
-export const guardarMuchosMongoDB = async (chara) => {
-  await Student.insertMany(chara)
-    .then((result) => {
-      result.forEach(chara => console.log(`\n💚 ${chara.charaName} 💚\n`))
-    })
-    .catch((error) => {
-      console.error('Error al insertar documentos:', error);
-    })
-}
-
-
-export const getAllCharasMongoDB = async () => await Student.find({}).sort('charaName')
-
-export const buscarMongoDB = async (charaName) => await Student.findOne({ charaName }) //Bucar en mongoDB por 'charaName'
-
-export const buscarArchivosMongoDB = async (boolean) => await Student.find({ files: boolean })
-
-//Se usa cuando se Sube a MongoDB por primera vez(false) o cuando se terminan de descargar los archivos(true)
-export const archivosDescargados = async (charaName) => {
-  await Student.updateOne({ charaName }, { $set: { files: true } })
-  console.log(`💚 ${charaName} Archivos Guardados en MongoDB 💚`)
-}
-
-
-
-export const modificarTodosLosArchivos = async (boolean) => {
-  await Student.updateMany({}, { $set: { files: boolean } }) //PARA ELIMINAR FILES EN TODA LA COLECCION
-  console.log(`La propiedad Files ha sido cambiada a: ${boolean}`)
-}
-
-
-
-//Borra un personaje, solo acepta el objeto entero del personaje por parametro.
-export const borrarPersonaje = async (chara) => {
-  await Student.deleteOne(chara)
-  console.log(`\n🖤${chara}🖤`)
-}
-
-
-// CAUTION / CUIDADO BORRA TODA LA COLECCION 'STUDENTS' DE MONGODB
-const borrarCollectionStudents = async (password) => {
-  if (password === process.env.PASSWORD) {
-    conectarMongoDB()
-    const charas = await Student.find({})
-    for (const chara of charas) {
-      console.log(`🖤 ${chara.charaName} 🖤`)
-      await borrarPersonaje(chara)
-    }
-    console.log('\n🖤 SE BORRO TODA LA COLECCION "Students" DE MONGODB 🖤\n')
-    desconectarMongoDB()
+  try {
+    return await Student.find({}).sort('charaName')
+  } catch (error) {
+    console.error('\nERROR al intentar OBTENER TODOS los personajes desde MongoDB\n', error)
   }
+
 }
 
 
 
-//Desconectar
-export const desconectarMongoDB = () => disconnect()
 
-import { connect, disconnect, Schema, model } from "mongoose";
+//UPDATE
+export const updateOneCharaMongoDB = async (chara) => {
+
+  try {
+    await Student.updateOne({ charaName: chara.charaName }, chara) //PARA ELIMINAR FILES EN TODA LA COLECCION
+    console.log(`\n❤️  ${chara.charaName} Actualizada ❤️\n`)
+  } catch (error) {
+    console.error(`\nERROR al intentar ACTUALiZAR TODOS los personajes desde MongoDB \n`, error)
+  }
+
+}
+
+
+
+
+//DELETE
+export const deleteAllCharasMongoDB = async () => {
+
+  try {
+
+    await Student.deleteMany({})
+    console.log('\n🖤 SE BORRO TODA LA COLECCION "students" DE MongoDB🖤\n')
+
+  } catch (error) {
+    console.error('\nError al intentar ELIMINAR la collecion "students" de MongoDB\n', error)
+  }
+
+}
+
+
+
+import { connect, Schema, model } from "mongoose";
 import dotenv from "dotenv";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';

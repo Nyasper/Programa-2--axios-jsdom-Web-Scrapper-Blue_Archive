@@ -3,17 +3,17 @@ export default async function searchFilesUpdates() {
 
     console.log('\nBuscando Actualizaciones de Archivos...\n')
 
-    const filesUpdates = await getFilesUpdatesSqlite()
+    const allCharasWithoutFiles = await getAllCharasWithoutFiles()
 
-    if (filesUpdates.length) console.log(`\n💙 ${filesUpdates.length} Archivos de Personajes para guardar 💙\n`)
+    if (allCharasWithoutFiles.length > 0) console.log(`\n💙 ${allCharasWithoutFiles.length} Archivos de Personajes para guardar 💙\n`)
 
-    else console.log('\n💜 Todos los archivos ya descargados 💜\n\n')
+    else console.log('\n💜 NO existen archivos disponibles para desacrgar 💜\n\n')
 
-    return filesUpdates
-
+    return allCharasWithoutFiles
   } catch (error) {
-    console.error('Se ha producido un Error en la funcion searchFilesUpdates')
+    console.error('\nSe ha producido un Error en la funcion searchFilesUpdates\n', error)
   }
 }
 
-import { getFilesUpdatesSqlite } from "../db/sqlite.js"
+
+import { getAllCharasWithoutFiles } from "../db/postgreSQL.js"

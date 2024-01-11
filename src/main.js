@@ -5,7 +5,7 @@ userPrompt();
 async function Mostrar_Personajes_Pagina() {
   const charaList = await scanCharaList()
   console.log('\nListando todos los personajes de la Pagina:\n')
-  charaList.forEach((chara, i) => console.log(`💗 ${i + 1} ${chara} 💗`))
+  charaList.forEach((chara, i) => console.log(`💗 ${i + 1} ${chara.charaName} 💗`))
 
 }
 
@@ -17,14 +17,12 @@ async function Buscar_Actualizaciones(opcion) {
 
     if (opcion === 'FULL') {
 
-      //Insert in SQLITE
-      for (const charaName of Actualizar) await insertCharaSqlite(await scanCharaInfo(charaName))
+      //Insert in PostgreSQL
+      for (const charaName of Actualizar) {
 
-      //From Sqlite to PostgreSQL
-      await actualizarPostgresSqldesdeSqlite()
+        await insertOneChara(await scanCharaInfo(charaName))
 
-      //From Sqlite to MongoDB
-      await actualizarMongoDBdesdeSqlite()
+      }
 
     }
 
@@ -33,14 +31,38 @@ async function Buscar_Actualizaciones(opcion) {
 
 
   catch (error) {
-    console.error('Se ha producido un error en la funcion Buscar_Actualizaciones en main.js')
-  }
-
-  finally {
-    closeSqlite()
+    console.error('\nSe ha producido un error en la funcion Buscar_Actualizaciones en main.js\n', error)
   }
 
 }
+
+
+async function Descargar_Archivos_Personajes() {
+
+  try {
+
+    const charaFilesToDownload = await searchFilesUpdates()
+
+    if (charaFilesToDownload.length > 0) {
+
+      for (const chara of charaFilesToDownload) {
+
+        await downloadFiles(chara)
+        await charaFilesDownloaded(chara)
+
+      }
+
+      console.log(`\n💜 ${charaFilesToDownload.length} Archivos Descargados en Total 💜\n`)
+
+    } else console.log('\nNO Hay Archivos disponibles para descargar\n')
+
+  } catch (error) {
+    console.error('\nERROR al intentar DESCARGAR ARCHIVOS de los personajes en main.js\n', error)
+  }
+
+}
+
+
 function userPrompt() {
   const separador = '\n-----------------------------------------------------------------------------------------------------------------------------------\n'
   console.log(separador)
@@ -72,7 +94,7 @@ function userPrompt() {
         case '1': Mostrar_Personajes_Pagina(); return;
         case '2': Buscar_Actualizaciones(); return;
         case '3': Buscar_Actualizaciones('FULL'); return;
-        case '4': runPuppeteer("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"); return;
+        case '4': Descargar_Archivos_Personajes(); return;
         default:
           console.log('Opción no válida');
           break;
@@ -92,7 +114,7 @@ function userPrompt() {
 import scanCharaList from "./func/scanCharaList.js";
 import searchUpdates from "./func/searchUpdates.js";
 import scanCharaInfo from "./func/scanCharaInfo.js"
-import { insertCharaSqlite, closeSqlite } from "./db/sqlite.js";
-import { actualizarPostgresSqldesdeSqlite, actualizarMongoDBdesdeSqlite } from "./db/sincronizarDB.js";
-import runPuppeteer from "./func/puppeteer.js"
+import downloadFiles from "./func/downloadFiles.js";
+import searchFilesUpdates from "./func/searchFilesUpdates.js";
+import { insertOneChara, charaFilesDownloaded } from "./db/postgreSQL.js";
 import readline from 'readline';

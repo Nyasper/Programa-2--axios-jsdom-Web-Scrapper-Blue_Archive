@@ -6,27 +6,19 @@ export default async function searchUpdates() {
   try {
 
     const pageCharaList = await scanCharaList() //💗Lista de personajes en la pagina💗
-    const sqliteCharaNameList = await getAllCharaNames() //💙Lista de los personajes de la Base de DAtos💙
-
-
-
+    const postgreSQLCharaList = await getAllCharasName()
 
     //Buscar Actualizaciones
 
-
-
-
     for (const pageChara of pageCharaList) {
 
-      if (!(sqliteCharaNameList.some(charaDB => charaDB.charaName == pageChara))) {
+      if (!(postgreSQLCharaList.some(charaDB => charaDB.charaName === pageChara.charaName))) {
 
-        Actualizar.push(pageChara)
+        Actualizar.push(pageChara.charaName)
 
       }
 
     }
-
-
 
     if (Actualizar.length) {
 
@@ -47,4 +39,4 @@ export default async function searchUpdates() {
 }
 
 import scanCharaList from "./scanCharaList.js"
-import { getAllCharaNames, closeSqlite } from "../db/sqlite.js"
+import { getAllCharasName } from "../db/postgreSQL.js"

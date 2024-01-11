@@ -75,15 +75,14 @@ export default async function scanCharaInfo(charaNameParameter) {
     let voice = await $selectText("#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(18) > td");
     if (voice == '-') voice = null;
 
-    let releaseDate = await $selectText("#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(19) > td");
-    if (releaseDate == '-') releaseDate = null;
+    let releaseDate = (await $selectText("#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(19) > td")).replaceAll('/', '-');
+    if (releaseDate === '-') releaseDate = null;
 
-    let url = `https://bluearchive.wiki/wiki/${charaNameParameter}`;
+    let pageUrl = `https://bluearchive.wiki/wiki/${charaNameParameter}`;
 
     let pageImageProfileUrl = null;
 
     let pageImageFullUrl = null;
-
 
     let localAudioSrc = `/media/${school}/${charaName}.ogg`;
 
@@ -96,16 +95,22 @@ export default async function scanCharaInfo(charaNameParameter) {
 
 
     (dom.window.document.querySelectorAll("img")).forEach(image => {
-
+      //profile image
       if (image.alt == charaName.replaceAll('_', ' ') && !image.src.includes('_full.png')) {
         pageImageProfileUrl = `https:${image.src}`;
       }
-
-      else if (image.alt == charaName.replaceAll('_', ' ') && image.src.includes('_full.png')) {
+      //full image
+      else if (image.alt == charaName.replaceAll('_', ' ') && image.src.includes('_full.png') || image.alt == charaName.replaceAll('_', ' ') && image.srcset.includes('00.png')) {
         pageImageFullUrl = `https://bluearchive.wiki${image.parentElement.href}`;
       }
-    })
 
+      if (pageImageFullUrl === null && image.srcset.includes('_00.png')) {
+
+        pageImageFullUrl = `https://bluearchive.wiki${image.parentElement.href}`
+
+      }
+
+    })
 
 
     const imgFullPage = new JSDOM(await getDATACharaInfo(pageImageFullUrl), { resources: 'usable' });
@@ -118,8 +123,6 @@ export default async function scanCharaInfo(charaNameParameter) {
       }
 
     })
-
-    let files = false;  //Se cambia a TRUE si descague las 2 imagenes y el audio del personaje
 
     return {
       charaName,
@@ -137,20 +140,20 @@ export default async function scanCharaInfo(charaNameParameter) {
       illustrator,
       voice,
       releaseDate,
-      url,
+      pageUrl,
       pageImageProfileUrl,
       pageImageFullUrl,
       audioUrl,
       localImageProfileSrc,
       localImageFullSrc,
-      localAudioSrc,
-      files
+      localAudioSrc
     }
   } catch (error) {
     console.error('\n\nSe ha producido un error al escanear la informacion del personaje\n\n', error)
     throw error
   }
 }
+
 
 import { getDATACharaInfo } from "./axiosRequests.js";
 import { JSDOM } from "jsdom";

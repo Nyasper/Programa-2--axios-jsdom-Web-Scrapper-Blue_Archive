@@ -1,5 +1,5 @@
 node_modules
 .env
 media
-mediaVieja
+BlueArchiveDB.sqlite
 .ini

@@ -9,7 +9,7 @@ export async function getDATACharaInfo(url) {
     });
     return data
   } catch (error) {
-    console.error(`\nError intentar hacer la Peticion Axios en la funcion getDATACharaInfo con el parametro: ${url}\n`)
+    console.error(`\nError intentar hacer la Peticion Axios en la funcion getDATACharaInfo, EL PARAMETRO ES:: ${url}\n`)
   }
 
 }
