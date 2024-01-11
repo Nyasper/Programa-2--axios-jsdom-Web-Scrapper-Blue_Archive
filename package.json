@@ -1,12 +1,12 @@
 {
   "type": "module",
-  "description": "",
+  "description": "Cree Este programa para extraer los datos e Imágenes de los personajes de Blue Archive (juego gacha de smarphone). Dichos datos y Archivos los extraigo de la wiki del juego: https://bluearchive.wiki/wiki/Characters.",
+  "version": "5.0",
   "scripts": {
     "start": "node src/main.js"
   },
   "dependencies": {
     "axios": "^1.6.5",
-    "better-sqlite3": "^9.2.2",
     "dotenv": "16.3.1",
     "jsdom": "^23.2.0",
     "mongoose": "^8.0.4",
