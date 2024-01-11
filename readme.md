@@ -22,7 +22,7 @@ Aquí se ubican todas las funciones que interactúan directamente con PostgreSQL
 -mongoDB.js:   
 Archivo con todas las funciones necesarias para que el programa se comunique con la Base de Datos MongoDB utilizando la librería MONGOOSE.  
     
--synchronizeDB.js:
+-synchronizeDB.js:  
 Esta función actualiza la Base de Datos MongoDB utilizando los datos de PostgreSql local. Primero obtiene los datos de PostgreSQL y los compara con los de MongoDB, si falta algún registro en esta última los agrega. Esta funcón se le puede especificar el parámetro "FORCE" para que en vez de solo agregar los nuevos registros a MongoDB elimina todos los registros que ya existen y los vuelve a crear desde cero.
       
 -scanCharaList.js:  
