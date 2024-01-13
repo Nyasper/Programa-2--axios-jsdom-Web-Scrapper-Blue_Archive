@@ -6,7 +6,7 @@ Los datos extraídos se guardan en la Base de Datos PostgreSQL local.
 # PASOS para Usar:
 1 : Instalar las Dependencias con 'npm install'  
 2 : Ejecutar el programa con 'npm start' 
-# FUNCIONES SECUNDARIAS
+# FUNCIONES SECUNDARIAS (/src/func)
 -axiosRequests.js:  
 Es donde están creadas las funciones necesarios para realizar las peticiones http a la página para extraer el HTML.  
    
@@ -37,14 +37,14 @@ Llama a la función scanCharaList() que retorna un arreglo con todos los nombres
 -downloadFiles.js:   
 Función que recibe por parámetro la información con los url de los archivos de imágenes y de audio de un personaje para luego descargarlos en el directorio /media del directorio raíz del proyecto.  
       
-# FUNCIONES PRINCIPALES   
--Mostrar_Personajes_Pagina()  
-LLama a la función scanCharaList() que retorna un arreglo con todos los nombres de los personajes de la wiki y luego itera sobre cada nombre para mostrarlo por consola.
-    
--Buscar_Actualizaciones()   
+# FUNCIONES PRINCIPALES(/src)    
+-mostrar_personajes_pagina()   
+LLama a la función scanCharaList() que retorna un arreglo con todos los nombres de los personajes de la wiki y luego itera sobre cada nombre para mostrarlo por consola.   
+     
+-buscar_actualizaciones()   
 Función que acepta el STRING ¨FULL¨ como parámetro. Si no se especifica dicho parámetro solo muestra por consola las actualizaciones disponibles para la base de datos. Si el parámetro es ¨FULL¨ muestra por consola todas las actualizaciones disponibles y también las inserta en la Base de Datos.   
     
--Descargar_Archivos_Personajes()  
+-descargar_archivos_personajes()  
 Como su nombre lo indica esta es la función encargada de descargar TODOS los archivos de cada personaje, en total son 3 archivos: imagen de perfil, imagen completa(full), y archivo de audio. Dichos archivos se descargan en el directorio '/media/${nombre_escuela}/${nombre_personaje}/${formato}' en el directorio raíz del proyecto
      
 # Referencias:  
