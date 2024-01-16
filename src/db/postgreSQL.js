@@ -103,7 +103,7 @@ export async function getAllStudents() {
       weaponType: chara.dataValues.weapontype,
       age: chara.dataValues.age,
       birthday: chara.dataValues.birthday,
-      hieght: chara.dataValues.height,
+      height: chara.dataValues.height,
       hobbies: chara.dataValues.hobbies,
       designer: chara.dataValues.designer,
       illustrator: chara.dataValues.illustrator,
