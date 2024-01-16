@@ -19,7 +19,7 @@ export default async function downloadFiles(chara) {
   }
 
   catch (error) {
-    console.error('Error al crear la carpeta /media:', error);
+    console.error('\n Error al crear la carpeta /media: \n'.bgRed, error);
   }
 
   // DOWNLOAD PROFILE IMAGE
@@ -29,10 +29,10 @@ export default async function downloadFiles(chara) {
     const downloadData = await getArchivesStream(chara.pageImageProfileUrl)
 
     await downloadData.data.pipe(writer)
-    console.log(`\n💚 DESACRGADO IMG_PROFILE de "${chara.charaName}" 💚 en la ruta: ${carpDest + format.imgProfile}`)
+    console.log(`\nDESACRGADO IMG_PROFILE de "${chara.charaName}" 💚 ${carpDest + format.imgProfile}`.green)
 
   } catch (error) {
-    console.error(`\nError al intentar DESCARGAR la imagen de Perfil de "${chara.charaName}", url: ${chara.pageImageProfileUrl}\n`, error);
+    console.error(`\n Error al intentar DESCARGAR la imagen de Perfil de "${chara.charaName}", url: ${chara.pageImageProfileUrl} \n`.bgRed, error);
   }
 
   // DOWNLOAD FULL IMAGE
@@ -42,10 +42,10 @@ export default async function downloadFiles(chara) {
     const downloadData = await getArchivesStream(chara.pageImageFullUrl)
 
     await downloadData.data.pipe(writer)
-    console.log(`\n💚 DESACRGADO IMG_FULL de "${chara.charaName}" en la ruta: ${carpDest + format.imgFull} 💚`)
+    console.log(`\nDESACRGADO IMG_FULL de "${chara.charaName}" 💚 ${carpDest + format.imgFull}`.green)
 
   } catch (error) {
-    console.error(`\nError al intentar DESCARGAR la imagen full de "${chara.charaName}", url: ${chara.pageImageFullUrl}\n`, error);
+    console.error(`\n Error al intentar DESCARGAR la imagen full de "${chara.charaName}", url: ${chara.pageImageFullUrl} \n`.bgRed, error);
   }
 
   // DOWNLOAD AUDIO
@@ -55,10 +55,10 @@ export default async function downloadFiles(chara) {
     const downloadData = await getArchivesStream(chara.audioUrl)
 
     await downloadData.data.pipe(writer)
-    console.log(`\n💚 DESACRGADO AUDIO de "${chara.charaName}" en la ruta: ${carpDest + format.audio} 💚`)
+    console.log(`\nDESACRGADO AUDIO de "${chara.charaName}" 💚 ${carpDest + format.audio}`.green)
 
   } catch (error) {
-    console.error(`\nError al intentar DESCARGAR el AUDIO de "${chara.charaName}", url: ${chara.audioUrl}\n`, error);
+    console.error(`\n Error al intentar DESCARGAR el AUDIO de "${chara.charaName}", url: ${chara.audioUrl} \n`.bgRed, error);
   }
 
 }

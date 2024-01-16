@@ -1,9 +1,19 @@
-import readline from 'readline';
 import mostrar_personajes_pagina from './mostrar_personajes_pagina.js';
 import buscar_actualizaciones from './buscar_actualizaciones.js';
 import descargar_archivos_personajes from './descargar_archivos_personajes.js';
+import { mainMenu } from './func/inquirer.js';
 
-userPrompt();
+const answer = await mainMenu();
+
+switch (answer) {
+  case 1: mostrar_personajes_pagina(); break;
+  case 2: buscar_actualizaciones(); break;
+  case 3: descargar_archivos_personajes(); break;
+  case 4: process.exit(0);
+  default:
+    console.log('Opción no válida'.bgRed);
+    break;
+}
 
 
 
@@ -13,8 +23,8 @@ userPrompt();
 
 
 
-
-
+/*
+// userPrompt();
 function userPrompt() {
   const separador = '\n-----------------------------------------------------------------------------------------------------------------------------------\n'
   console.log(separador)
@@ -61,5 +71,4 @@ function userPrompt() {
       rl.close();
     });
 }
-
-
+*/

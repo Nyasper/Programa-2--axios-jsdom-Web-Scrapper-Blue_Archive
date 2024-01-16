@@ -1,17 +1,21 @@
 export default async function searchFilesUpdates() {
   try {
 
-    console.log('\nBuscando Actualizaciones de Archivos...\n')
+    console.log('\n Buscando Actualizaciones de Archivos... \n'.bgBlue)
 
     const allCharasWithoutFiles = await getAllCharasWithoutFiles()
 
-    if (allCharasWithoutFiles.length > 0) console.log(`\n💙 ${allCharasWithoutFiles.length} Archivos de Personajes para guardar 💙\n`)
-
-    else console.log('\n💜 NO existen archivos disponibles para desacrgar 💜\n\n')
+    if (allCharasWithoutFiles.length > 0) {
+      console.log(`\n💙 ${allCharasWithoutFiles.length * 3} Archivos Totales de Personajes para guardar de ${allCharasWithoutFiles.length} personajes 💙\n`.blue)
+    }
+    else {
+      console.log('\n 💜 NO existen archivos disponibles para desacrgar 💜 \n\n'.bgMagenta);
+      process.exit(0);
+    }
 
     return allCharasWithoutFiles
   } catch (error) {
-    console.error('\nSe ha producido un Error en la funcion searchFilesUpdates\n', error)
+    console.error('\n Se ha producido un Error en la funcion searchFilesUpdates \n'.bgRed, error)
   }
 }
 

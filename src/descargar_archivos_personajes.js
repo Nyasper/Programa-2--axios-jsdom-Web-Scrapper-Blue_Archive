@@ -1,7 +1,7 @@
 import downloadFiles from "./func/downloadFiles.js";
 import searchFilesUpdates from "./func/searchFilesUpdates.js";
 import { charaFilesDownloaded } from "./db/postgreSQL.js";
-
+import { updateMenu } from "./func/inquirer.js";
 
 export default async function descargar_archivos_personajes() {
 
@@ -9,18 +9,24 @@ export default async function descargar_archivos_personajes() {
 
     const charaFilesToDownload = await searchFilesUpdates()
 
-    if (charaFilesToDownload.length > 0) {
+    const answer = await updateMenu()
 
-      for (const chara of charaFilesToDownload) {
+    switch (answer) {
 
-        await downloadFiles(chara)
-        await charaFilesDownloaded(chara)
+      case 1:
+        for (const chara of charaFilesToDownload) {
+          await downloadFiles(chara)
+          await charaFilesDownloaded(chara)
+        }
+        console.log(`\n 💚 ${charaFilesToDownload.length * 3} Archivos Descargados en Total 💚 \n`.green)
+        break;
 
-      }
+      case 2:
+        process.exit(0);
+    }
+    process.exit(0);
 
-      console.log(`\n💜 ${charaFilesToDownload.length} Archivos Descargados en Total 💜\n`)
 
-    } else console.log('\nNO Hay Archivos disponibles para descargar\n')
 
   } catch (error) {
     console.error('\nERROR al intentar DESCARGAR ARCHIVOS de los personajes en main.js\n', error)

@@ -9,7 +9,7 @@ export async function getDATACharaInfo(url) {
     });
     return data
   } catch (error) {
-    console.error(`\nError intentar hacer la Peticion Axios en la funcion getDATACharaInfo, EL PARAMETRO ES:: ${url}\n`)
+    console.error(`\n Error intentar hacer la Peticion Axios en la funcion getDATACharaInfo, EL PARAMETRO ES: ${url} \n`.bgRed)
   }
 
 }
@@ -22,7 +22,7 @@ export async function getArchivesStream(url) {
     });
 
   } catch (error) {
-    console.error(`\nError intentar hacer la Peticion Axios en la funcion  getArchivesStream con el parametro: ${url}\n`)
+    console.error(`\n Error intentar hacer la Peticion Axios en la funcion  getArchivesStream con el parametro: ${url}\n `.bgRed)
   }
 
 }

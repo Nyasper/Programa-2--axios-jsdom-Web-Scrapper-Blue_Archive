@@ -50,6 +50,9 @@ export const Students = sequelize.define('students', {
   releasedate: {
     type: DATEONLY
   },
+  skinset: {
+    type: STRING
+  },
   pageurl: {
     type: STRING
   },
@@ -88,8 +91,8 @@ export const Students = sequelize.define('students', {
 
 /*
 console.log('\nSincronizando tabla Students...\n')
-await sequelize.sync();
 */
+await Students.sync();
 
 import { STRING, BOOLEAN, INTEGER, DATEONLY } from 'sequelize';
 import { sequelize } from '../db/sequelize.js';

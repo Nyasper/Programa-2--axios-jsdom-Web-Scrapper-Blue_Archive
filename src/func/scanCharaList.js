@@ -17,13 +17,13 @@ export default async function scanCharaList() {
       charaList.push(
         {
           charaName: await $selectElement("#mw-content-text > div.mw-parser-output > table > tbody").children[i].children[1].textContent.replaceAll(' ', '_').trim(),
-          img: 'https:' + (await $selectElement("#mw-content-text > div.mw-parser-output > table > tbody").children[i].children[0].children[0].children[0].children[0].src)
+          img: 'https:' + (await $selectElement("#mw-content-text > div.mw-parser-output > table > tbody").children[i].children[0].children[0].children[0].children[0].src),
         })
     }
     return charaList
 
   } catch (e) {
-    return console.error("\nSe a producido un error en la funcion 'scanCharaList()' al intentar hacer la peticion get con axios.\n\n")
+    return console.error("\n Se a producido un error en la funcion 'scanCharaList()' al intentar hacer la peticion get con axios. \n\n".bgRed)
   }
 }
 

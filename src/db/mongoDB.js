@@ -1,5 +1,6 @@
 const rutaActual = dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: `${rutaActual}/.env` });
+import colors from 'colors';
 
 //Student Schema
 const studentSchema = new Schema({
@@ -54,6 +55,9 @@ const studentSchema = new Schema({
   releaseDate: {
     type: String
   },
+  skinSet: {
+    type: String
+  },
   pageUrl: {
     type: String
   },
@@ -89,7 +93,7 @@ const Student = model('students', studentSchema);
 try {
   await connect(process.env.MONGODB_URI);
 } catch (error) {
-  console.log('\nError al intentar conectar a MongoDB\n', error);
+  console.log('\n Error al intentar conectar a MongoDB \n'.bgRed, error);
 }
 
 
@@ -99,7 +103,7 @@ export const saveOneCharaMongoDB = async (chara) => {
   try {
 
     await new Student(chara).save()
-    console.log(`\n💚 ${chara.charaName} 💚\n`) //Guardar en MongoDB
+    console.log(`\n💚 ${chara.charaName} 💚\n`.green);
 
   } catch (error) {
     console.error(`\nError al intentar INSERTAR "${chara.charaName} en MongoDB"\n`, error)
@@ -112,10 +116,10 @@ export const saveManyCharasMongoDB = async (charas) => {
   try {
 
     const saveAllStudents = await Student.insertMany(charas)
-    console.log(`\n💚 INSERTADO ${saveAllStudents.length} Personajes en la Coleccion "students" en MongoDB💚\n`)
+    console.log(`\n💚 INSERTADO ${saveAllStudents.length} Personajes en la Coleccion "students" en MongoDB💚\n`.green)
 
   } catch (error) {
-    console.error('\nError al intentar INSERTAR todos los personajes en la coleccion "students" en MongoDB\n', error)
+    console.error('\n Error al intentar INSERTAR todos los personajes en la coleccion "students" en MongoDB \n'.bgRed, error)
   }
 
 }
@@ -129,7 +133,7 @@ export const getOneCharaMongoDB = async (charaName) => {
   try {
     return await Student.findOne({ charaName })
   } catch (error) {
-    console.error(`\nERROR al intentar OBTENER "${charaName}" desde MongoDB\n`, error)
+    console.error(`\n ERROR al intentar OBTENER "${charaName}" desde MongoDB \n`.bgRed, error)
   }
 }
 
@@ -138,7 +142,7 @@ export const getAllCharasMongoDB = async () => {
   try {
     return await Student.find({}).sort('charaName')
   } catch (error) {
-    console.error('\nERROR al intentar OBTENER TODOS los personajes desde MongoDB\n', error)
+    console.error('\n ERROR al intentar OBTENER TODOS los personajes desde MongoDB \n'.bgRed, error)
   }
 
 }
@@ -151,9 +155,9 @@ export const updateOneCharaMongoDB = async (chara) => {
 
   try {
     await Student.updateOne({ charaName: chara.charaName }, chara) //PARA ELIMINAR FILES EN TODA LA COLECCION
-    console.log(`\n❤️  ${chara.charaName} Actualizada ❤️\n`)
+    console.log(`\n ❤️  ${chara.charaName} Actualizada ❤️ \n`.bgGreen)
   } catch (error) {
-    console.error(`\nERROR al intentar ACTUALiZAR TODOS los personajes desde MongoDB \n`, error)
+    console.error(`\n ERROR al intentar ACTUALiZAR TODOS los personajes desde MongoDB \n`.bgRed, error)
   }
 
 }
@@ -167,10 +171,10 @@ export const deleteAllCharasMongoDB = async () => {
   try {
 
     await Student.deleteMany({})
-    console.log('\n🖤 SE BORRO TODA LA COLECCION "students" DE MongoDB🖤\n')
+    console.log('\n 🖤 SE BORRO TODA LA COLECCION "students" DE MongoDB 🖤 \n'.black)
 
   } catch (error) {
-    console.error('\nError al intentar ELIMINAR la collecion "students" de MongoDB\n', error)
+    console.error('\n Error al intentar ELIMINAR la collecion "students" de MongoDB \n'.bgRed, error)
   }
 
 }

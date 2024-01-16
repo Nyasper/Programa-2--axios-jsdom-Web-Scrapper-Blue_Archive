@@ -1,8 +1,10 @@
-
+import colors from 'colors';
+import scanCharaList from "./scanCharaList.js"
+import { getAllCharasName } from "../db/postgreSQL.js"
 export default async function searchUpdates() {
 
   const Actualizar = []
-  console.log(`\nBuscando actualizaciones de nuevos Personajes...\n\n`)
+  console.log(`\n Buscando actualizaciones de nuevos Personajes... \n\n`.bgBlue)
   try {
 
     const pageCharaList = await scanCharaList() //💗Lista de personajes en la pagina💗
@@ -23,20 +25,20 @@ export default async function searchUpdates() {
     if (Actualizar.length) {
 
 
-      for (const charaActualizar of Actualizar) console.log(`💙 ${charaActualizar} 💙  https://bluearchive.wiki/wiki/${charaActualizar}\n`)
+      for (const charaActualizar of Actualizar) console.log(`${charaActualizar} 💙  https://bluearchive.wiki/wiki/${charaActualizar}\n`.blue)
 
-      console.log(`\n\n💙 ${Actualizar.length} personajes disponibles para guardar 💙\n\n`)
+      console.log(`\n\n💙 ${Actualizar.length} personajes disponibles para guardar 💙\n\n`.blue)
 
-    } else console.log('\n💜 No hay personajes nuevos para guardar. 💜\n')
+    } else {
+      console.log('\n No hay personajes nuevos para guardar. \n'.bgMagenta)
+      process.exit(0);
+    }
 
 
     return Actualizar
 
   } catch (error) {
-    console.error("\nSe ha producido un error en la funcion 'searchUpdates'\n", error)
+    console.error("\n Se ha producido un error en la funcion 'searchUpdates' \n".bgRed, error)
   }
 
 }
-
-import scanCharaList from "./scanCharaList.js"
-import { getAllCharasName } from "../db/postgreSQL.js"

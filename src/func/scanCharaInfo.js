@@ -78,6 +78,11 @@ export default async function scanCharaInfo(charaNameParameter) {
     let releaseDate = (await $selectText("#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(19) > td")).replaceAll('/', '-');
     if (releaseDate === '-') releaseDate = null;
 
+    let skinSet = 'original';
+    if (charaNameParameter.includes('_(') && charaNameParameter.endsWith(')')) {
+      skinSet = charaNameParameter.split('(')[1].split(')')[0].toLowerCase().trim();
+    }
+
     let pageUrl = `https://bluearchive.wiki/wiki/${charaNameParameter}`;
 
     let pageImageProfileUrl = null;
@@ -96,20 +101,16 @@ export default async function scanCharaInfo(charaNameParameter) {
 
     (dom.window.document.querySelectorAll("img")).forEach(image => {
       //profile image
-      if (image.alt == charaName.replaceAll('_', ' ') && !image.src.includes('_full.png')) {
+      if (image.alt === charaName.replaceAll('_', ' ') && !image.src.includes('_full.png')) {
         pageImageProfileUrl = `https:${image.src}`;
       }
       //full image
-      else if (image.alt == charaName.replaceAll('_', ' ') && image.src.includes('_full.png') || image.alt == charaName.replaceAll('_', ' ') && image.srcset.includes('00.png')) {
+      else if (image.alt.toLowerCase() === skinSet.replaceAll('_', ' ')) {
         pageImageFullUrl = `https://bluearchive.wiki${image.parentElement.href}`;
       }
-
-      if (pageImageFullUrl === null && image.srcset.includes('_00.png')) {
-
-        pageImageFullUrl = `https://bluearchive.wiki${image.parentElement.href}`
-
+      else if (image.alt.toLowerCase() === charaName.toLowerCase().replaceAll('_', ' ')) {
+        pageImageFullUrl = `https://bluearchive.wiki${image.parentElement.href}`;
       }
-
     })
 
 
@@ -118,8 +119,8 @@ export default async function scanCharaInfo(charaNameParameter) {
 
     (imgFullPage.window.document.querySelectorAll("a")).forEach(a => {
 
-      if (a.textContent.trim() == 'Original file') {
-        pageImageFullUrl = `http:${a.href}`
+      if (a.textContent.trim() === 'Original file') {
+        pageImageFullUrl = 'https:' + a.href;
       }
 
     })
@@ -140,6 +141,7 @@ export default async function scanCharaInfo(charaNameParameter) {
       illustrator,
       voice,
       releaseDate,
+      skinSet,
       pageUrl,
       pageImageProfileUrl,
       pageImageFullUrl,
@@ -149,11 +151,10 @@ export default async function scanCharaInfo(charaNameParameter) {
       localAudioSrc
     }
   } catch (error) {
-    console.error('\n\nSe ha producido un error al escanear la informacion del personaje\n\n', error)
+    console.error('\n\n Se ha producido un error al escanear la informacion del personaje \n\n'.bgRed, error)
     throw error
   }
 }
-
 
 import { getDATACharaInfo } from "./axiosRequests.js";
 import { JSDOM } from "jsdom";

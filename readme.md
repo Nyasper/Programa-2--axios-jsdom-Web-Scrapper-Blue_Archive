@@ -44,7 +44,7 @@ LLama a la función scanCharaList() que retorna un arreglo con todos los nombres
 -buscar_actualizaciones()   
 Función que acepta el STRING ¨FULL¨ como parámetro. Si no se especifica dicho parámetro solo muestra por consola las actualizaciones disponibles para la base de datos. Si el parámetro es ¨FULL¨ muestra por consola todas las actualizaciones disponibles y también las inserta en la Base de Datos.   
     
--descargar_archivos_personajes()  
+-descargar_archivos_personajes()   
 Como su nombre lo indica esta es la función encargada de descargar TODOS los archivos de cada personaje, en total son 3 archivos: imagen de perfil, imagen completa(full), y archivo de audio. Dichos archivos se descargan en el directorio '/media/${nombre_escuela}/${nombre_personaje}/${formato}' en el directorio raíz del proyecto
      
 # Referencias:  

@@ -62,7 +62,7 @@ export async function actualizarMongoDB(option) {
   }
 
 }
-
+await actualizarMongoDB('FORCE');
 import { getAllStudents } from "./postgreSQL.js"
 import { deleteAllCharasMongoDB, saveManyCharasMongoDB, getAllCharasMongoDB } from "./mongoDB.js";
 import { disconnect } from "mongoose";
