@@ -6,22 +6,21 @@ import { mainMenu } from './func/inquirer.js';
 const answer = await mainMenu();
 
 switch (answer) {
-  case 1: mostrar_personajes_pagina(); break;
-  case 2: buscar_actualizaciones(); break;
-  case 3: descargar_archivos_personajes(); break;
-  case 4: process.exit(0);
-  default:
-    console.log('Opción no válida'.bgRed);
-    break;
+	case 1:
+		mostrar_personajes_pagina();
+		break;
+	case 2:
+		buscar_actualizaciones();
+		break;
+	case 3:
+		descargar_archivos_personajes();
+		break;
+	case 4:
+		process.exit(0);
+	default:
+		console.log('Opción no válida'.bgRed);
+		break;
 }
-
-
-
-
-
-
-
-
 
 /*
 // userPrompt();
