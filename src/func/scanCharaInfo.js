@@ -214,4 +214,3 @@ const getAudioUrl = (dom) => {
 const getLocalImageProfileSrc = (school, charaName) => `/media/${school}/${charaName}.png`
 const getLocalImageFullSrc = (school, charaName) => `/media/${school}/${charaName}_full.png`
 const getLocalAudioSrc = (school, charaName) => `/media/${school}/${charaName}.ogg`
-

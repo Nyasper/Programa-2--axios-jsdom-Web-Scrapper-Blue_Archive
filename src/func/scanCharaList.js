@@ -3,35 +3,19 @@ export default async function scanCharaList() {
 
 	try {
 		//JSDOM
-		const dom = new JSDOM(
-			await getDATACharaInfo('https://bluearchive.wiki/wiki/Characters'),
-			{ resources: 'usable' },
-		);
-		const $selectElement = (selector) =>
-			dom.window.document.querySelector(selector);
+		const dom = new JSDOM(await getDATACharaInfo('https://bluearchive.wiki/wiki/Characters'), { resources: 'usable' });
+		const $selectElement = (selector) => dom.window.document.querySelector(selector);
 
 		//Cantidad de personajes en la pagina:
-		const totalChara = parseInt(
-			await $selectElement(
-				'#mw-content-text > div.mw-parser-output > table > tbody',
-			).children.length,
-		);
-
+		const charaUl = $selectElement('#mw-content-text > div.mw-parser-output > table > tbody');
+		const totalChara = parseInt(charaUl.children.length);
 		for (let i = 1; i < totalChara; i++) {
 			charaList.push({
-				charaName: await $selectElement(
-					'#mw-content-text > div.mw-parser-output > table > tbody',
-				)
-					.children[i].children[1].textContent.replaceAll(' ', '_')
-					.trim(),
-				img:
-					'https:' +
-					(await $selectElement(
-						'#mw-content-text > div.mw-parser-output > table > tbody',
-					).children[i].children[0].children[0].children[0].children[0].src),
+				charaName: charaUl.children[i].children[1].textContent.trim().replaceAll(' ', '_'),
+				img: 'https:' + charaUl.children[i].children[0].children[0].children[0].children[0].src,
 			});
 		}
-		return charaList;
+		return charaList
 	} catch (e) {
 		return console.error(
 			"\n Se a producido un error en la funcion 'scanCharaList()' al intentar hacer la peticion get con axios. \n\n"

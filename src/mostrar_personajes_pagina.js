@@ -11,3 +11,13 @@ export default async function Mostrar_Personajes_Pagina() {
 	);
 	process.exit(0);
 }
+
+
+/*
+			const charaList = totalChara.map(async (charaName, index) => {
+				return {
+					charaName: charaName.children[index].children[1].textContent.replaceAll(' ', '_'),
+					img: 'https:' + (await $selectElement('#mw-content-text > div.mw-parser-output > table > tbody').children[index].children[0].children[0].children[0].children[0].src)
+				}
+			})
+			*/
