@@ -1,26 +1,44 @@
-export default async function downloadFiles(chara) {
-	//url, charaName, schoolName, format parametro antiguos
-	//format: .png(foto de perfil) o _full.png (imagen full) o .ogg(audio)
-	const format = {
-		imgProfile: '.png',
-		imgFull: '_full.png',
-		audio: '.ogg',
-	};
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
+import { getArchivesStream } from './axiosRequests.js';
 
-	const rutaActual = path.dirname(fileURLToPath(import.meta.url));
-	const dirMedia = path.join(rutaActual, '..', '..', 'media'); // carpeta /media en la ruta raiz '/' del proyecto
+const format = {
+	imgProfile: '.png',
+	imgFull: '_full.png',
+	audio: '.ogg',
+};
+
+const rutaActual = path.dirname(fileURLToPath(import.meta.url));
+const dirMedia = path.join(rutaActual, '..', '..', 'media'); // carpeta /media en la ruta raiz '/' del proyecto
+
+export default async function downloadFiles(chara) {
+
 	const dirSchool = path.join(dirMedia, chara.school); // carpeta /${schoolName} dentro de /media, SE UTILIZA PARA CREAR LOS DIRECTORIOS SI NO EXISTEN
 
-	const carpDest = path.join(dirMedia, chara.school, chara.charaName); // ruta completa del destino del archivo: /media/${schoolName}/${charaName} + ${format}
-	// Si no existe, crea la carpeta
+	await createMediaFolder(dirMedia, dirSchool);
+	await downloadImageProfile(chara);
+	await downloadImageFull(chara);
+	await downloadAudio(chara);
+}
+
+async function createMediaFolder(dirMedia, dirSchool) {
 	try {
-		if (!fs.existsSync(dirMedia)) fs.mkdirSync(dirMedia, { recursive: true }); // recursive: true crea carpetas anidadas si es necesario}
-		if (!fs.existsSync(dirSchool)) fs.mkdirSync(dirSchool, { recursive: true });
+		if (!fs.existsSync(dirMedia)) {
+			// Si no existe la carpeta /media, crea la carpeta
+			fs.mkdirSync(dirMedia, { recursive: true }); //recursive: true crea carpetas anidadas si es necesario}
+		}
+		if (!fs.existsSync(dirSchool)) {
+			// Si no existe la carpeta /media/schoolName, crea la carpeta
+			fs.mkdirSync(dirSchool, { recursive: true });
+		}
 	} catch (error) {
 		console.error('\n Error al crear la carpeta /media: \n'.bgRed, error);
 	}
+}
 
-	// DOWNLOAD PROFILE IMAGE
+async function downloadImageProfile(chara) {
+	const carpDest = path.join(dirMedia, chara.school, chara.charaName); // ruta completa del destino del archivo: /media/${schoolName}/${charaName} + ${format}
 	try {
 		const writer = fs.createWriteStream(carpDest + format.imgProfile);
 		const downloadData = await getArchivesStream(chara.pageImageProfileUrl);
@@ -37,8 +55,10 @@ export default async function downloadFiles(chara) {
 			error,
 		);
 	}
+}
 
-	// DOWNLOAD FULL IMAGE
+async function downloadImageFull(chara) {
+	const carpDest = path.join(dirMedia, chara.school, chara.charaName);
 	try {
 		const writer = fs.createWriteStream(carpDest + format.imgFull);
 		const downloadData = await getArchivesStream(chara.pageImageFullUrl);
@@ -55,8 +75,10 @@ export default async function downloadFiles(chara) {
 			error,
 		);
 	}
+}
 
-	// DOWNLOAD AUDIO
+async function downloadAudio(chara) {
+	const carpDest = path.join(dirMedia, chara.school, chara.charaName);
 	try {
 		const writer = fs.createWriteStream(carpDest + format.audio);
 		const downloadData = await getArchivesStream(chara.audioUrl);
@@ -74,8 +96,3 @@ export default async function downloadFiles(chara) {
 		);
 	}
 }
-
-import { fileURLToPath } from 'url';
-import path from 'path';
-import fs from 'fs';
-import { getArchivesStream } from './axiosRequests.js';

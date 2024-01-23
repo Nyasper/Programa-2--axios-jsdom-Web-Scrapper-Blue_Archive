@@ -5,15 +5,12 @@ export default async function searchFilesUpdates() {
 		const allCharasWithoutFiles = await getAllCharasWithoutFiles();
 
 		if (allCharasWithoutFiles.length > 0) {
-			console.log(
-				`\n💙 ${allCharasWithoutFiles.length * 3} Archivos Totales de Personajes para guardar de ${allCharasWithoutFiles.length} personajes 💙\n`
-					.blue,
-			);
+			allCharasWithoutFiles.forEach(chara => {
+				console.log(`\n💙 ${chara.charaName} 💙`);
+			})
+			console.log(`\n💙 ${allCharasWithoutFiles.length * 3} Archivos Totales para guardar de ${allCharasWithoutFiles.length} personajes 💙\n`.blue);
 		} else {
-			console.log(
-				'\n 💜 NO existen archivos disponibles para desacrgar 💜 \n\n'
-					.bgMagenta,
-			);
+			console.log('\n 💜 NO existen archivos disponibles para desacrgar 💜 \n\n'.bgMagenta,);
 			process.exit(0);
 		}
 

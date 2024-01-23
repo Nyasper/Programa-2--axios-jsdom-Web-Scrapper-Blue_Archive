@@ -1,171 +1,78 @@
+import { getDATACharaInfo } from './axiosRequests.js';
+import { JSDOM } from 'jsdom';
+
+const mainsSchools = [
+	'Abydos',
+	'Arius',
+	'Gehenna',
+	'Hyakkiyako',
+	'Millennium',
+	'Red Winter',
+	'SRT',
+	'Shanhaijing',
+	'Trinity',
+	'Valkyrie',
+];
+
 export default async function scanCharaInfo(charaNameParameter) {
-	const mainsSchools = [
-		'Abydos',
-		'Arius',
-		'Gehenna',
-		'Hyakkiyako',
-		'Millennium',
-		'Red Winter',
-		'SRT',
-		'Shanhaijing',
-		'Trinity',
-		'Valkyrie',
-	];
 
 	try {
 		//JSDOM
-		const dom = new JSDOM(
-			await getDATACharaInfo(
-				`https://bluearchive.wiki/wiki/${charaNameParameter}`,
-			),
-			{ resources: 'usable' },
-		);
-		const $selectText = async (selector) =>
-			await dom.window.document.querySelector(selector).textContent.trim();
+		const dom = new JSDOM(await getDATACharaInfo(`https://bluearchive.wiki/wiki/${charaNameParameter}`), { resources: 'usable' });
+		const $selectText = (selector) => dom.window.document.querySelector(selector).textContent.trim();
+
 
 		//Data Extraction
-		let charaName = await $selectText('#firstHeading > span');
-		charaName = charaName.replaceAll(' ', '_');
+		const charaName = getCharaName(charaNameParameter);
 
-		let name = await $selectText('#firstHeading > span');
-		if (name == '-') name = null;
-		name = name.split(' ')[0].trim();
+		const name = getName(await $selectText('#firstHeading > span'));
 
-		let lastName = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(11) > td',
-		);
-		if (lastName == '-') lastName = null;
-		lastName = lastName.split(' ')[0].trim();
+		const lastName = getLastName(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(11) > td'));
 
-		let school = await $selectText(
+		const school = getSchool(await $selectText(
 			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(4) > td:nth-child(1)',
-		);
-		if (!mainsSchools.includes(school)) school = 'other';
+		));
 
-		let role = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(4) > td:nth-child(2)',
-		);
-		if (role == '-') role = null;
-		role = role.replace('/', '_');
 
-		let combatClass = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(7) > td',
-		);
-		if (combatClass == '-') combatClass = null;
+		const role = getRole(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(4) > td:nth-child(2)'));
 
-		let weaponType = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(9) > td > table > tbody > tr > td.weapon > div.weapon-text',
-		);
-		if (weaponType == '-') weaponType = null;
+		const combatClass = getCombatClass(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(7) > td',
+		));
 
-		let age = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(12) > td',
-		);
+		const weaponType = getWeaponType(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(9) > td > table > tbody > tr > td.weapon > div.weapon-text'));
 
-		if (!isNaN(parseInt(age))) {
-			age = parseInt(age);
-		} else {
-			age = null;
-		}
+		const age = getAge(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(12) > td'));
 
-		let birthday = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(13) > td',
-		);
-		if (birthday == '-') birthday = null;
+		const birthday = getBirthday(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(13) > td'));
 
-		let height = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(14) > td',
-		);
-		height = height.split('cm')[0];
-		if (!isNaN(parseInt(height))) {
-			//si el parametro de parseInt() no es un entero devuelve isNaN y por lo tanto la variable se queda vacia
-			height = parseInt(height);
-		} else {
-			height = null;
-		}
+		const height = getHeight(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(14) > td'));
 
-		let hobbies = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(15) > td',
-		);
-		if (hobbies == '-') hobbies = null;
-		if (hobbies.includes("'")) hobbies = hobbies.replaceAll("'", '');
+		const hobbies = getHobbies(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(15) > td'));
 
-		let designer = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(16) > td',
-		);
-		if (designer == '-') designer = null;
+		const designer = getDesigner(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(16) > td'));
 
-		let illustrator = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(17) > td',
-		);
-		if (illustrator == '-') illustrator = null;
+		const illustrator = getIllustrator(await $selectText(
+			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(17) > td'));
 
-		let voice = await $selectText(
-			'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(18) > td',
-		);
-		if (voice == '-') voice = null;
+		const voice = getVoice(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(18) > td'));
 
-		let releaseDate = (
-			await $selectText(
-				'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(19) > td',
-			)
-		).replaceAll('/', '-');
-		if (releaseDate === '-') releaseDate = null;
+		const releaseDate = getReleaseDate(await $selectText('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(19) > td'));
 
-		let skinSet = 'original';
-		if (charaNameParameter.includes('_(') && charaNameParameter.endsWith(')')) {
-			skinSet = charaNameParameter
-				.split('(')[1]
-				.split(')')[0]
-				.toLowerCase()
-				.trim();
-		}
+		const skinSet = getSkinSet(charaName);
 
-		let pageUrl = `https://bluearchive.wiki/wiki/${charaNameParameter}`;
+		const pageUrl = `https://bluearchive.wiki/wiki/${charaName}`;
 
-		let pageImageProfileUrl = null;
+		const pageImageProfileUrl = getPageImageProfileUrl(dom, charaName);
 
-		let pageImageFullUrl = null;
+		const pageImageFullUrl = await getPageImageFullUrl(dom, charaName, skinSet);
 
-		let localAudioSrc = `/media/${school}/${charaName}.ogg`;
+		const localAudioSrc = getLocalAudioSrc(school, charaName);
 
-		let localImageProfileSrc = `/media/${school}/${charaName}.png`;
+		const localImageProfileSrc = getLocalImageProfileSrc(school, charaName);
 
-		let localImageFullSrc = `/media/${school}/${charaName}_full.png`;
+		const localImageFullSrc = getLocalImageFullSrc(school, charaName);
 
-		let audioUrl =
-			'https:' +
-			dom.window.document.querySelector(
-				'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(18) > td',
-			).dataset.voice;
-
-		dom.window.document.querySelectorAll('img').forEach((image) => {
-			//profile image
-			if (
-				image.alt === charaName.replaceAll('_', ' ') &&
-				!image.src.includes('_full.png')
-			) {
-				pageImageProfileUrl = `https:${image.src}`;
-			}
-			//full image
-			else if (image.alt.toLowerCase() === skinSet.replaceAll('_', ' ')) {
-				pageImageFullUrl = `https://bluearchive.wiki${image.parentElement.href}`;
-			} else if (
-				image.alt.toLowerCase() === charaName.toLowerCase().replaceAll('_', ' ')
-			) {
-				pageImageFullUrl = `https://bluearchive.wiki${image.parentElement.href}`;
-			}
-		});
-
-		const imgFullPage = new JSDOM(await getDATACharaInfo(pageImageFullUrl), {
-			resources: 'usable',
-		});
-
-		imgFullPage.window.document.querySelectorAll('a').forEach((a) => {
-			if (a.textContent.trim() === 'Original file') {
-				pageImageFullUrl = 'https:' + a.href;
-			}
-		});
+		const audioUrl = getAudioUrl(dom);
 
 		return {
 			charaName,
@@ -202,5 +109,109 @@ export default async function scanCharaInfo(charaNameParameter) {
 	}
 }
 
-import { getDATACharaInfo } from './axiosRequests.js';
-import { JSDOM } from 'jsdom';
+//GET Functions
+const getCharaName = (charaName) => charaName
+const getName = (name) => name.split(' ')[0].trim();
+const getLastName = (lastName) => lastName.split(' ')[0].trim()
+const getSchool = (school) => {
+	if (!mainsSchools.includes(school)) {
+		return school = 'other';
+	}
+	return school
+}
+const getRole = (role) => role.replace('/', '_');
+const getCombatClass = (combatClass) => combatClass
+const getWeaponType = (weaponType) => weaponType
+const getAge = (age) => {
+	if (!isNaN(parseInt(age))) {
+		return parseInt(age);
+	}
+	return null;
+}
+const getBirthday = (birthday) => {
+	if (birthday === '-') {
+		return null
+	}
+	return birthday
+}
+const getHeight = (height) => {
+	if (height.includes('cm')) {
+		let newHeight = height.split('cm')[0];
+		if (!isNaN(parseInt(newHeight))) {
+			return parseInt(newHeight);
+		}
+		return null;
+	}
+	return null
+}
+const getHobbies = (hobbies) => {
+	if (hobbies.includes("'")) {
+		return hobbies.replaceAll("'", '');
+	}
+	return hobbies
+}
+const getDesigner = (designer) => {
+	if (designer === '-') {
+		return null
+	}
+	return designer
+}
+const getIllustrator = (illustrator) => {
+	if (illustrator === '-') {
+		return null
+	}
+	return illustrator
+}
+const getVoice = (voice) => voice
+const getReleaseDate = (releaseDate) => releaseDate.replaceAll('/', '-');
+
+const getSkinSet = (charaName) => {
+	if (charaName.includes('_(') && charaName.endsWith(')')) {
+		return charaName
+			.split('(')[1]
+			.split(')')[0]
+			.toLowerCase()
+			.trim();
+	}
+	return 'original';
+}
+
+const getPageImageProfileUrl = (dom, charaName) => {
+	let pageImageProfile = '';
+	dom.window.document.querySelectorAll('img').forEach((img) => {
+		if (img.alt === charaName.replaceAll('_', ' ') && !img.src.includes('_full.png')) {
+			pageImageProfile = 'https:' + img.src;
+		}
+	});
+	if (pageImageProfile) return pageImageProfile
+	return null
+}
+
+
+const getPageImageFullUrl = async (dom, charaName, skinSet) => {
+	let newPageUrl = '';
+	dom.window.document.querySelectorAll('img').forEach((image) => {
+		if (image.alt.toLowerCase() === skinSet.replaceAll('_', ' ')) {
+			newPageUrl = `https://bluearchive.wiki${image.parentElement.href}`;
+		} else if (image.alt.toLowerCase() === charaName.toLowerCase().replaceAll('_', ' ')) {
+			newPageUrl = `https://bluearchive.wiki${image.parentElement.href}`;
+		}
+	});
+	if (newPageUrl) {
+		const newPagedom = new JSDOM(await getDATACharaInfo(newPageUrl), { resources: 'usable' });
+		newPagedom.window.document.querySelectorAll('a').forEach((a) => {
+			if (a.textContent === 'Original file') {
+				newPageUrl = 'https:' + a.href;
+			}
+		});
+		return newPageUrl
+	}
+	return null
+}
+const getAudioUrl = (dom) => {
+	return 'https:' + dom.window.document.querySelector('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(18) > td').dataset.voice;
+}
+const getLocalImageProfileSrc = (school, charaName) => `/media/${school}/${charaName}.png`
+const getLocalImageFullSrc = (school, charaName) => `/media/${school}/${charaName}_full.png`
+const getLocalAudioSrc = (school, charaName) => `/media/${school}/${charaName}.ogg`
+
