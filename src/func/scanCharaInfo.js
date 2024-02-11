@@ -1,24 +1,12 @@
-import { getDATACharaInfo } from './axiosRequests.js';
+import { getHtmlFromUrl } from './axiosRequests.js';
 import { JSDOM } from 'jsdom';
-
-const mainsSchools = [
-	'Abydos',
-	'Arius',
-	'Gehenna',
-	'Hyakkiyako',
-	'Millennium',
-	'Red Winter',
-	'SRT',
-	'Shanhaijing',
-	'Trinity',
-	'Valkyrie',
-];
+import { getCharaName, getName, getLastName, getSchool, getRole, getCombatClass, getWeaponType, getAge, getBirthday, getHeight, getHobbies, getDesigner, getIllustrator, getVoice, getReleaseDate, getSkinSet, getPageImageProfileUrl, getPageImageFullUrl, getLocalAudioSrc, getLocalImageProfileSrc, getLocalImageFullSrc, getAudioUrl } from './getFunctions.js';
 
 export default async function scanCharaInfo(charaNameParameter) {
 
 	try {
 		//JSDOM
-		const dom = new JSDOM(await getDATACharaInfo(`https://bluearchive.wiki/wiki/${charaNameParameter}`), { resources: 'usable' });
+		const dom = new JSDOM(await getHtmlFromUrl(`https://bluearchive.wiki/wiki/${charaNameParameter}`), { resources: 'usable' });
 		const $selectText = (selector) => dom.window.document.querySelector(selector).textContent.trim();
 
 
@@ -109,108 +97,3 @@ export default async function scanCharaInfo(charaNameParameter) {
 	}
 }
 
-//GET Functions
-const getCharaName = (charaName) => charaName
-const getName = (name) => name.split(' ')[0].trim();
-const getLastName = (lastName) => lastName.split(' ')[0].trim()
-const getSchool = (school) => {
-	if (!mainsSchools.includes(school)) {
-		return school = 'other';
-	}
-	return school
-}
-const getRole = (role) => role.replace('/', '_');
-const getCombatClass = (combatClass) => combatClass
-const getWeaponType = (weaponType) => weaponType
-const getAge = (age) => {
-	if (!isNaN(parseInt(age))) {
-		return parseInt(age);
-	}
-	return null;
-}
-const getBirthday = (birthday) => {
-	if (birthday === '-') {
-		return null
-	}
-	return birthday
-}
-const getHeight = (height) => {
-	if (height.includes('cm')) {
-		let newHeight = height.split('cm')[0];
-		if (!isNaN(parseInt(newHeight))) {
-			return parseInt(newHeight);
-		}
-		return null;
-	}
-	return null
-}
-const getHobbies = (hobbies) => {
-	if (hobbies.includes("'")) {
-		return hobbies.replaceAll("'", '');
-	}
-	return hobbies
-}
-const getDesigner = (designer) => {
-	if (designer === '-') {
-		return null
-	}
-	return designer
-}
-const getIllustrator = (illustrator) => {
-	if (illustrator === '-') {
-		return null
-	}
-	return illustrator
-}
-const getVoice = (voice) => voice
-const getReleaseDate = (releaseDate) => releaseDate.replaceAll('/', '-');
-
-const getSkinSet = (charaName) => {
-	if (charaName.includes('_(') && charaName.endsWith(')')) {
-		return charaName
-			.split('(')[1]
-			.split(')')[0]
-			.toLowerCase()
-			.trim();
-	}
-	return 'original';
-}
-
-const getPageImageProfileUrl = (dom, charaName) => {
-	let pageImageProfile = '';
-	dom.window.document.querySelectorAll('img').forEach((img) => {
-		if (img.alt === charaName.replaceAll('_', ' ') && !img.src.includes('_full.png')) {
-			pageImageProfile = 'https:' + img.src;
-		}
-	});
-	if (pageImageProfile) return pageImageProfile
-	return null
-}
-
-
-const getPageImageFullUrl = async (dom, charaName, skinSet) => {
-	let newPageUrl = '';
-	dom.window.document.querySelectorAll('img').forEach((image) => {
-		if (image.alt.toLowerCase() === skinSet.replaceAll('_', ' ')) {
-			newPageUrl = `https://bluearchive.wiki${image.parentElement.href}`;
-		} else if (image.alt.toLowerCase() === charaName.toLowerCase().replaceAll('_', ' ')) {
-			newPageUrl = `https://bluearchive.wiki${image.parentElement.href}`;
-		}
-	});
-	if (newPageUrl) {
-		const newPagedom = new JSDOM(await getDATACharaInfo(newPageUrl), { resources: 'usable' });
-		newPagedom.window.document.querySelectorAll('a').forEach((a) => {
-			if (a.textContent === 'Original file') {
-				newPageUrl = 'https:' + a.href;
-			}
-		});
-		return newPageUrl
-	}
-	return null
-}
-const getAudioUrl = (dom) => {
-	return 'https:' + dom.window.document.querySelector('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(18) > td').dataset.voice;
-}
-const getLocalImageProfileSrc = (school, charaName) => `/media/${school}/${charaName}.png`
-const getLocalImageFullSrc = (school, charaName) => `/media/${school}/${charaName}_full.png`
-const getLocalAudioSrc = (school, charaName) => `/media/${school}/${charaName}.ogg`

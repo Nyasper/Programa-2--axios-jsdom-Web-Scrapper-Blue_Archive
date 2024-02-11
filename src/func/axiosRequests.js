@@ -1,5 +1,6 @@
-//Axios
-export async function getDATACharaInfo(url) {
+import axios from 'axios';
+
+export async function getHtmlFromUrl(url) {
 	try {
 		const { data } = await axios.get(url, {
 			headers: {
@@ -30,4 +31,3 @@ export async function getArchivesStream(url) {
 		);
 	}
 }
-import axios from 'axios';

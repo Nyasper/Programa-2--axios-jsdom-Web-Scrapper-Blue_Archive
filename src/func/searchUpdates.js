@@ -1,6 +1,7 @@
 import colors from 'colors';
 import scanCharaList from './scanCharaList.js';
 import { getAllCharasName } from '../db/postgreSQL.js';
+
 export default async function searchUpdates() {
 	const Actualizar = [];
 	console.log(

@@ -1,9 +1,12 @@
+import { getHtmlFromUrl } from './axiosRequests.js';
+import { JSDOM } from 'jsdom';
+
 export default async function scanCharaList() {
 	const charaList = [];
 
 	try {
 		//JSDOM
-		const dom = new JSDOM(await getDATACharaInfo('https://bluearchive.wiki/wiki/Characters'), { resources: 'usable' });
+		const dom = new JSDOM(await getHtmlFromUrl('https://bluearchive.wiki/wiki/Characters'), { resources: 'usable' });
 		const $selectElement = (selector) => dom.window.document.querySelector(selector);
 
 		//Cantidad de personajes en la pagina:
@@ -23,6 +26,3 @@ export default async function scanCharaList() {
 		);
 	}
 }
-
-import { getDATACharaInfo } from './axiosRequests.js';
-import { JSDOM } from 'jsdom';
