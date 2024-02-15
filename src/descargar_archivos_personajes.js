@@ -13,7 +13,7 @@ export default async function descargar_archivos_personajes() {
 			case 1:
 				for (const chara of charaFilesToDownload) {
 					await downloadFiles(chara);
-					await charaFilesDownloaded(chara);
+					// await charaFilesDownloaded(chara);
 				}
 				console.log(
 					`\n 💚 ${charaFilesToDownload.length * 3} Archivos Descargados en Total 💚 \n`

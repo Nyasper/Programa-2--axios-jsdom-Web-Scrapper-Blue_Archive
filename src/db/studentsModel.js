@@ -66,15 +66,6 @@ export const Students = sequelize.define(
 		audiourl: {
 			type: STRING,
 		},
-		localimageprofilesrc: {
-			type: STRING,
-		},
-		localimagefullsrc: {
-			type: STRING,
-		},
-		localaudiosrc: {
-			type: STRING,
-		},
 		files: {
 			type: BOOLEAN,
 			defaultValue: false,

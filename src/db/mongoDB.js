@@ -71,15 +71,6 @@ const studentSchema = new Schema(
 		audioUrl: {
 			type: String,
 		},
-		localImageProfileSrc: {
-			type: String,
-		},
-		localImageFullSrc: {
-			type: String,
-		},
-		localAudioSrc: {
-			type: String,
-		},
 		files: {
 			type: Boolean,
 			default: false,

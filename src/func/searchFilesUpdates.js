@@ -8,7 +8,7 @@ export default async function searchFilesUpdates() {
 			allCharasWithoutFiles.forEach(chara => {
 				console.log(`\n💙 ${chara.charaName} 💙`);
 			})
-			console.log(`\n💙 ${allCharasWithoutFiles.length * 3} Archivos Totales para guardar de ${allCharasWithoutFiles.length} personajes 💙\n`.blue);
+			console.log(`\n💙 ${allCharasWithoutFiles.length} personajes sin archivos 💙\n💙 En total ${allCharasWithoutFiles.length * 3} archivos para descargar 💙\n`.blue);
 		} else {
 			console.log('\n 💜 NO existen archivos disponibles para desacrgar 💜 \n\n'.bgMagenta,);
 			process.exit(0);

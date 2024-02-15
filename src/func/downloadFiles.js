@@ -3,23 +3,17 @@ import path from 'path';
 import fs from 'fs';
 import { getArchivesStream } from './axiosRequests.js';
 
-const format = {
-	imgProfile: '.png',
-	imgFull: '_full.png',
-	audio: '.ogg',
-};
-
 const rutaActual = path.dirname(fileURLToPath(import.meta.url));
 const dirMedia = path.join(rutaActual, '..', '..', 'media'); // carpeta /media en la ruta raiz '/' del proyecto
 
 export default async function downloadFiles(chara) {
-
 	const dirSchool = path.join(dirMedia, chara.school); // carpeta /${schoolName} dentro de /media, SE UTILIZA PARA CREAR LOS DIRECTORIOS SI NO EXISTEN
+	const carpDest = path.join(dirMedia, chara.school, chara.charaName); // ruta completa del destino del archivo: /media/${schoolName}/${charaName} + ${format}
 
 	await createMediaFolder(dirMedia, dirSchool);
-	await downloadImageProfile(chara);
-	await downloadImageFull(chara);
-	await downloadAudio(chara);
+	await downloadImageProfile(chara, carpDest);
+	await downloadImageFull(chara, carpDest);
+	await downloadAudio(chara, carpDest);
 }
 
 async function createMediaFolder(dirMedia, dirSchool) {
@@ -37,60 +31,43 @@ async function createMediaFolder(dirMedia, dirSchool) {
 	}
 }
 
-async function downloadImageProfile(chara) {
-	const carpDest = path.join(dirMedia, chara.school, chara.charaName); // ruta completa del destino del archivo: /media/${schoolName}/${charaName} + ${format}
-	try {
-		const writer = fs.createWriteStream(carpDest + format.imgProfile);
-		const downloadData = await getArchivesStream(chara.pageImageProfileUrl);
+const downloadImageProfile = async (chara, carpDest) => await download(chara, carpDest, '.png')
 
-		await downloadData.data.pipe(writer);
-		console.log(
-			`\nDESACRGADO IMG_PROFILE de "${chara.charaName}" 💚 ${carpDest + format.imgProfile}`
-				.green,
-		);
-	} catch (error) {
-		console.error(
-			`\n Error al intentar DESCARGAR la imagen de Perfil de "${chara.charaName}", url: ${chara.pageImageProfileUrl} \n`
-				.bgRed,
-			error,
-		);
+
+const downloadImageFull = async (chara, carpDest) => await download(chara, carpDest, '_full.png')
+
+
+const downloadAudio = async (chara, carpDest) => await download(chara, carpDest, '.ogg')
+
+async function download(chara, carpDest, format) {
+	let fileUrl;
+
+	if (format === '.png') {
+		fileUrl = chara.pageImageProfileUrl
 	}
-}
-
-async function downloadImageFull(chara) {
-	const carpDest = path.join(dirMedia, chara.school, chara.charaName);
-	try {
-		const writer = fs.createWriteStream(carpDest + format.imgFull);
-		const downloadData = await getArchivesStream(chara.pageImageFullUrl);
-
-		await downloadData.data.pipe(writer);
-		console.log(
-			`\nDESACRGADO IMG_FULL de "${chara.charaName}" 💚 ${carpDest + format.imgFull}`
-				.green,
-		);
-	} catch (error) {
-		console.error(
-			`\n Error al intentar DESCARGAR la imagen full de "${chara.charaName}", url: ${chara.pageImageFullUrl} \n`
-				.bgRed,
-			error,
-		);
+	else if (format === '_full.png') {
+		fileUrl = chara.pageImageFullUrl
 	}
-}
-
-async function downloadAudio(chara) {
-	const carpDest = path.join(dirMedia, chara.school, chara.charaName);
+	else if (format === '.ogg') {
+		fileUrl = chara.audioUrl
+	}
 	try {
-		const writer = fs.createWriteStream(carpDest + format.audio);
-		const downloadData = await getArchivesStream(chara.audioUrl);
+		const writer = fs.createWriteStream(carpDest + format);
 
-		await downloadData.data.pipe(writer);
-		console.log(
-			`\nDESACRGADO AUDIO de "${chara.charaName}" 💚 ${carpDest + format.audio}`
-				.green,
-		);
+		const downloadData = await getArchivesStream(fileUrl);
+
+		await new Promise((resolve, reject) => {
+			downloadData.pipe(writer);
+			writer.on('finish', () => {
+				console.log(`\n💚 "${chara.charaName}${format}" en  ${carpDest + format}\npageURL:${fileUrl} 💚`.green);
+				resolve();
+			});
+			writer.on('error', reject);
+		});
+
 	} catch (error) {
 		console.error(
-			`\n Error al intentar DESCARGAR el AUDIO de "${chara.charaName}", url: ${chara.audioUrl} \n`
+			`\n Error al intentar descargar.\n personaje: "${chara.charaName}"\n, url del archivo: ${fileUrl}  \n`
 				.bgRed,
 			error,
 		);

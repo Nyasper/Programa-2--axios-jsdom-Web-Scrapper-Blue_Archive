@@ -17,9 +17,7 @@ export const getSchool = (school) => {
     'Trinity',
     'Valkyrie',
   ];
-  if (!mainsSchools.includes(school)) {
-    return school = 'other';
-  }
+  if (!mainsSchools.includes(school)) return 'other';
   return school
 }
 
@@ -80,55 +78,62 @@ export const getVoice = (voice) => voice.replaceAll(' ', '_').trim()
 export const getReleaseDate = (releaseDate) => releaseDate.replaceAll('/', '-');
 
 export const getSkinSet = (charaName) => {
-  if (charaName.includes('_(') && charaName.endsWith(')')) {
-    return charaName
-      .split('(')[1]
-      .split(')')[0]
-      .toLowerCase()
-      .trim();
+  try {
+    if (charaName.includes('_(') && charaName.endsWith(')')) {
+      return charaName
+        .split('(')[1]
+        .split(')')[0]
+        .trim()
+        .toLowerCase();
+    }
+  } catch (error) {
+    console.error(`\nERROR al intentar obtener "skinSet" de "${charaName}"\n`)
   }
+
   return 'original';
 }
 
 export const getPageImageProfileUrl = (dom, charaName) => {
-  let pageImageProfile = '';
-  dom.window.document.querySelectorAll('img').forEach((img) => {
-    if (img.alt === charaName.replaceAll('_', ' ') && !img.src.includes('_full.png')) {
-      pageImageProfile = 'https:' + img.src;
-    }
-  });
-  if (pageImageProfile) return pageImageProfile
-  return null
+  try {
+    const images = Array.from(dom.window.document.querySelectorAll('img'));
+    const pageImageProfile = images.find((img) => img.alt === charaName.replaceAll('_', ' '))
+
+    if (!pageImageProfile) throw new Error(`\nError al intentar obtener "pageImageProfile" de "${charaName}"\n`)
+    return 'https:' + pageImageProfile.src
+  } catch (error) {
+    console.error(`\nError en la funcion "getPageImageProfileUrl" de: "${charaName}"\n`, error)
+    return null
+  }
+
 }
 
 
 export const getPageImageFullUrl = async (dom, charaName, skinSet) => {
-  let newPageUrl = '';
-  dom.window.document.querySelectorAll('img').forEach((image) => {
-    if (image.alt.toLowerCase() === skinSet.replaceAll('_', ' ')) {
-      newPageUrl = `https://bluearchive.wiki${image.parentElement.href}`;
-    } else if (image.alt.toLowerCase() === charaName.toLowerCase().replaceAll('_', ' ')) {
-      newPageUrl = `https://bluearchive.wiki${image.parentElement.href}`;
-    }
-  });
-  if (newPageUrl) {
-    const newPagedom = new JSDOM(await getHtmlFromUrl(newPageUrl), { resources: 'usable' });
-    newPagedom.window.document.querySelectorAll('a').forEach((a) => {
-      if (a.textContent === 'Original file') {
-        newPageUrl = 'https:' + a.href;
-      }
-    });
-    return newPageUrl
+
+  try {
+
+    const images = Array.from(dom.window.document.querySelectorAll('img'));
+
+    const imgFullTiny = images.find((img) => img.alt.toLowerCase() === charaName.toLowerCase() && img.src.includes('_full') || img.alt.toLowerCase().replaceAll(' ', '_') === skinSet.toLowerCase() && img.src.includes('_00.png') || charaName.toLowerCase() && img.src.endsWith('_00.png'))
+
+    if (!imgFullTiny) throw new Error(`\nERROR al obtener "imgFullTiny" de "${charaName}"\n`);
+    const newPageImgFull = 'https://bluearchive.wiki' + imgFullTiny.parentElement.href
+
+    const newPageDom = new JSDOM(await getHtmlFromUrl(newPageImgFull), { resources: 'usable' });
+
+    const anchors = Array.from(newPageDom.window.document.querySelectorAll('a'));
+
+    const pageImageFullUrl = anchors.find((a) => a.textContent.toLowerCase() === 'original file');
+
+    if (!pageImageFullUrl) throw new Error(`\nERROR al obtener "pageImageFullUrl" de "${charaName}"\n`)
+    return 'https:' + pageImageFullUrl
+
+  } catch (error) {
+    console.error(`\nError en la funcion "getPageImageFullUrl" de: "${charaName}"\n`, error)
+    return null
   }
-  return null
 }
 
 export const getAudioUrl = (dom) => {
   return 'https:' + dom.window.document.querySelector('#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(18) > td').dataset.voice;
 }
-
-export const getLocalImageProfileSrc = (school, charaName) => `/media/${school}/${charaName}.png`
-
-export const getLocalImageFullSrc = (school, charaName) => `/media/${school}/${charaName}_full.png`
-
-export const getLocalAudioSrc = (school, charaName) => `/media/${school}/${charaName}.ogg`

@@ -20,10 +20,12 @@ export async function getHtmlFromUrl(url) {
 
 export async function getArchivesStream(url) {
 	try {
-		return await axios(url, {
+		const { data } = await axios({
 			method: 'get',
-			responseType: 'stream',
+			url,
+			responseType: 'stream'
 		});
+		return data;
 	} catch (error) {
 		console.error(
 			`\n Error intentar hacer la Peticion Axios en la funcion  getArchivesStream con el parametro: ${url}\n `

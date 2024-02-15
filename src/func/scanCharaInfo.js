@@ -1,6 +1,6 @@
 import { getHtmlFromUrl } from './axiosRequests.js';
 import { JSDOM } from 'jsdom';
-import { getCharaName, getName, getLastName, getSchool, getRole, getCombatClass, getWeaponType, getAge, getBirthday, getHeight, getHobbies, getDesigner, getIllustrator, getVoice, getReleaseDate, getSkinSet, getPageImageProfileUrl, getPageImageFullUrl, getLocalAudioSrc, getLocalImageProfileSrc, getLocalImageFullSrc, getAudioUrl } from './getFunctions.js';
+import { getCharaName, getName, getLastName, getSchool, getRole, getCombatClass, getWeaponType, getAge, getBirthday, getHeight, getHobbies, getDesigner, getIllustrator, getVoice, getReleaseDate, getSkinSet, getPageImageProfileUrl, getPageImageFullUrl, getAudioUrl } from './getFunctions.js';
 
 export default async function scanCharaInfo(charaNameParameter) {
 
@@ -54,12 +54,6 @@ export default async function scanCharaInfo(charaNameParameter) {
 
 		const pageImageFullUrl = await getPageImageFullUrl(dom, charaName, skinSet);
 
-		const localAudioSrc = getLocalAudioSrc(school, charaName);
-
-		const localImageProfileSrc = getLocalImageProfileSrc(school, charaName);
-
-		const localImageFullSrc = getLocalImageFullSrc(school, charaName);
-
 		const audioUrl = getAudioUrl(dom);
 
 		return {
@@ -82,10 +76,7 @@ export default async function scanCharaInfo(charaNameParameter) {
 			pageUrl,
 			pageImageProfileUrl,
 			pageImageFullUrl,
-			audioUrl,
-			localImageProfileSrc,
-			localImageFullSrc,
-			localAudioSrc,
+			audioUrl
 		};
 	} catch (error) {
 		console.error(
@@ -96,4 +87,3 @@ export default async function scanCharaInfo(charaNameParameter) {
 		throw error;
 	}
 }
-

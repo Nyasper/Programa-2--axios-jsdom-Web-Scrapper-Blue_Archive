@@ -2,58 +2,49 @@ const separador =
 	'\n---------------------------------------------------------------------------------------------------------------------------\n';
 
 export async function actualizarMongoDB(option) {
-	const Actualizaciones = [];
 
 	try {
-		const allCharasPostgreSQL = await getAllStudents(); //get Charas of Sqlite
+		const allCharasPostgreSQL = await getAllStudents(); //get Charas of PostgreSQL
 
 		if (option === 'FORCE') {
 			await deleteAllCharasMongoDB();
-
 			await saveManyCharasMongoDB(allCharasPostgreSQL);
-		} else {
+		}
+		else {
 			const allCharasMongoDB = await getAllCharasMongoDB(); //get Charas of MongoDB
 
-			for (const charasPostgreSQL of allCharasPostgreSQL) {
-				if (
-					!allCharasMongoDB.some(
-						(mongoDB) => mongoDB.charaName === charasPostgreSQL.charaName,
-					)
-				) {
-					Actualizaciones.push(charasPostgreSQL);
-				}
-			}
+			const missingCharas = allCharasPostgreSQL.filter((charaPostgreSql) => !allCharasMongoDB.some(charaMongoDB => charaMongoDB.charaName === charaPostgreSql.charaName))
 
-			if (Actualizaciones.length > 0) {
+			if (missingCharas.length > 0) {
 				console.log(separador);
 
 				console.log('\n\nActualizando MongoDB desde PostgreSQL...\n\n');
 
-				Actualizaciones.forEach((act) =>
-					console.log(`💙 ${act.charaName} 💙 ${act.pageUrl}\n`),
+				missingCharas.forEach((p) =>
+					console.log(`💙 ${p.charaName} 💙 ${p.pageUrl}\n`.blue),
 				);
 
 				console.log(
-					`\n\n${Actualizaciones.length} Personajes de PostgreSQL que no existen en MongoDB:\n`,
+					`\n\n ${missingCharas.length} Personajes de PostgreSQL que no existen en MongoDB: \n`.bgMagenta,
 				);
 
-				console.log('\nInsertando nuevos Personajes en MongoDB...\n');
+				console.log('\nInsertando nuevos Personajes en MongoDB...\n'.blue);
 
-				await saveManyCharasMongoDB(Actualizaciones);
+				await saveManyCharasMongoDB(missingCharas);
 
-				console.log('\n💜 MongoDB Actualizado exitosamente 💜\n');
-			} else console.log('\n💜 MongoDB ya esta actualizado. 💜\n');
+				console.log('\n💜 MongoDB Actualizado exitosamente 💜\n'.magenta);
+			} else console.log('\n💜 MongoDB ya esta actualizado. 💜\n'.magenta);
 		}
 	} catch (error) {
 		console.error(
-			'\nError al intentar actualizar MongoDB desde Sqlite:\n',
+			'\nError al intentar actualizar MongoDB desde PostgreSQL:\n',
 			error,
 		);
 	} finally {
 		disconnect();
 	}
 }
-// await actualizarMongoDB('FORCE');
+
 import { getAllStudents } from './postgreSQL.js';
 import {
 	deleteAllCharasMongoDB,

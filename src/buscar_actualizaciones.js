@@ -15,14 +15,13 @@ export default async function buscar_actualizaciones() {
 				for (const charaName of Actualizar) {
 					insertOneChara(await scanCharaInfo(charaName));
 				}
-				await actualizarMongoDB('');
+				await actualizarMongoDB();
 				break;
 
 			case 2:
 				process.exit(0);
 		}
 		process.exit(0);
-		//Insert in PostgreSQL
 	} catch (error) {
 		console.error(
 			'\nSe ha producido un error en la funcion Buscar_Actualizaciones en main.js\n'

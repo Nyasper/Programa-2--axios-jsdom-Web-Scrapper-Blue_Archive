@@ -25,9 +25,6 @@ export const insertOneChara = async (chara) => {
 			pageimageprofileurl: chara.pageImageProfileUrl,
 			pageimagefullurl: chara.pageImageFullUrl,
 			audiourl: chara.audioUrl,
-			localimageprofilesrc: chara.localImageProfileSrc,
-			localimagefullsrc: chara.localImageFullSrc,
-			localaudiosrc: chara.localAudioSrc,
 		});
 
 		console.log(`\n💚 ${chara.charaName} 💚\n`.green);
@@ -65,9 +62,6 @@ export async function getOneStudent(charaname) {
 				pageImageProfileUrl: Student.dataValues.pageimageprofileurl,
 				pageImageFullUrl: Student.dataValues.pageimagefullurl,
 				audioUrl: Student.dataValues.audiourl,
-				localImageProfileSrc: Student.dataValues.localimageprofilesrc,
-				localImageFullSrc: Student.dataValues.localimagefullsrc,
-				localAudioSrc: Student.dataValues.localaudiosrc,
 				files: Student.dataValues.files,
 				createdAt: Student.dataValues.createdAt,
 			};
@@ -108,9 +102,6 @@ export async function getAllStudents() {
 			pageImageProfileUrl: chara.dataValues.pageimageprofileurl,
 			pageImageFullUrl: chara.dataValues.pageimagefullurl,
 			audioUrl: chara.dataValues.audiourl,
-			localImageProfileSrc: chara.dataValues.localimageprofilesrc,
-			localImageFullSrc: chara.dataValues.localimagefullsrc,
-			localAudioSrc: chara.dataValues.localaudiosrc,
 			files: chara.dataValues.files,
 			createdAt: chara.dataValues.createdAt,
 		}));
@@ -198,10 +189,7 @@ export async function updateOneChara(chara) {
 				pageurl: chara.pageUrl,
 				pageimageprofileurl: chara.pageImageProfileUrl,
 				pageimagefullurl: chara.pageImageFullUrl,
-				audiourl: chara.audioUrl,
-				localimageprofilesrc: chara.localImageProfileSrc,
-				localimagefullsrc: chara.localImageFullSrc,
-				localaudiosrc: chara.localAudioSrc,
+				audiourl: chara.audioUrl
 			},
 			{ where: { charaname: chara.charaName } },
 		);
@@ -222,7 +210,7 @@ export async function charaFilesDownloaded(chara) {
 		);
 		console.log(
 			`\n 💚 DESCARGADO TODOS LOS ARCHIVOS de "${chara.charaName}" 💚`.bgGreen +
-				'\n',
+			'\n',
 		);
 	} catch (error) {
 		console.error(
