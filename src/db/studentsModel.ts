@@ -1,3 +1,6 @@
+import { STRING, BOOLEAN, INTEGER, DATEONLY } from 'sequelize';
+import { sequelize } from './sequelize';
+
 export const Students = sequelize.define(
 	'students',
 	{
@@ -78,10 +81,38 @@ export const Students = sequelize.define(
 	},
 );
 
-/*
-console.log('\nSincronizando tabla Students...\n')
-*/
-await Students.sync();
+export interface IStudent {
+	charaName: string;
+	name: string;
+	lastName: string;
+	school: string;
+	role: string;
+	combatClass: string;
+	weaponType: string;
+	age: number | null;
+	birthday: string | null;
+	height: number | null;
+	hobbies: string;
+	designer: string | null;
+	illustrator: string | null;
+	voice: string;
+	releaseDate: string;
+	skinSet: string;
+	pageUrl: string;
+	pageImageProfileUrl: string | null;
+	pageImageFullUrl: string | null;
+	audioUrl: string | null;
+	files: boolean;
+}
 
-import { STRING, BOOLEAN, INTEGER, DATEONLY } from 'sequelize';
-import { sequelize } from '../db/sequelize.js';
+export interface ICharaFiles {
+	charaName: string;
+	name: string;
+	school: string;
+	pageImageProfileUrl: string;
+	pageImageFullUrl: string;
+	audioUrl: string;
+	files: boolean;
+}
+
+Students.sync();

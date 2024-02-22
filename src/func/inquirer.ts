@@ -37,10 +37,12 @@ export async function mainMenu() {
 	return opt;
 }
 
-export async function updateMenu() {
+async function updateMenu() {
 	console.log(
 		'\n-----------------------------------------------------------------------------------------------------------------------------------\n',
 	);
 	const { opt } = await inquirer.prompt(updateMenuOptions);
 	return opt;
 }
+
+mainMenu().then((e) => console.log(e));

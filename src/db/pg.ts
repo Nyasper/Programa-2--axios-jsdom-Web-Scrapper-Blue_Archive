@@ -1,6 +1,14 @@
-const rutaActual = dirname(fileURLToPath(import.meta.url));
+import pg, { Client } from 'pg';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { getAllCharasName } from './postgreSQL';
+
+// const rutaActual = dirname(fileURLToPath(import.meta.url));
+const rutaActual = __dirname;
+
 dotenv.config({ path: `${rutaActual}/.env` });
-let client;
+let client: Client;
 
 try {
 	const localOptions = {
@@ -11,14 +19,18 @@ try {
 		database: process.env.PG_LOCAL_DATABASE,
 	};
 
-	client = new pg.Client(localOptions);
+	const cloudOptions = {
+		connectionString: process.env.POSTGRES_URL,
+	};
 
-	await client.connect();
+	client = new pg.Client(cloudOptions);
+
+	(async () => await client.connect())();
 } catch (error) {
 	console.error('Error al intentar Conectarse a PostgressSQL', error);
 }
 
-export const insertIntoPostgreSQL = async (chara) => {
+export const insertIntoPostgreSQL = async (chara: any) => {
 	try {
 		const query = `
       INSERT INTO students (
@@ -138,9 +150,12 @@ export const getSetsSkins = async () => {
 	}
 };
 
-export const desconectarPostgreSQL = async () => await client.end();
+(async () => {
+	const students = await getAllCharasName();
+	if (students) {
+		console.log(students);
+		students.forEach((e: any) => console.log(`\n${e.charaName}`));
+	}
+})();
 
-import pg from 'pg';
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+export const desconectarPostgreSQL = async () => await client.end();

@@ -1,8 +1,7 @@
-import { Students } from './studentsModel.js';
-import colors from 'colors';
+import { Students, IStudent, ICharaFiles } from './studentsModel';
 
 //CREATE
-export const insertOneChara = async (chara) => {
+export const insertOneChara = async (chara: IStudent): Promise<void> => {
 	try {
 		await Students.create({
 			charaname: chara.charaName,
@@ -27,61 +26,54 @@ export const insertOneChara = async (chara) => {
 			audiourl: chara.audioUrl,
 		});
 
-		console.log(`\n💚 ${chara.charaName} 💚\n`.green);
+		console.log(`\n💚 ${chara.charaName} 💚\n`);
 	} catch (error) {
-		console.error(
-			`\n Error al INSERTAR insertar a: "${chara.charaName}" \n`.bgRed,
-			error,
-		);
+		throw new Error(`\n Error al INSERTAR insertar a: "${chara.charaName}" \n`);
 	}
 };
 
 //READ
-export async function getOneStudent(charaname) {
-	if (charaname) {
-		try {
-			const Student = await Students.findOne({ where: { charaname } });
-			return {
-				charaName: Student.dataValues.charaname,
-				name: Student.dataValues.name,
-				lastName: Student.dataValues.lastname,
-				school: Student.dataValues.school,
-				role: Student.dataValues.role,
-				combatClass: Student.dataValues.combatclass,
-				weaponType: Student.dataValues.weapontype,
-				age: Student.dataValues.age,
-				birthday: Student.dataValues.birthday,
-				hieght: Student.dataValues.height,
-				hobbies: Student.dataValues.hobbies,
-				designer: Student.dataValues.designer,
-				illustrator: Student.dataValues.illustrator,
-				voice: Student.dataValues.voice,
-				releaseDate: Student.dataValues.releasedate,
-				skinSet: chara.skinset,
-				pageUrl: Student.dataValues.pageurl,
-				pageImageProfileUrl: Student.dataValues.pageimageprofileurl,
-				pageImageFullUrl: Student.dataValues.pageimagefullurl,
-				audioUrl: Student.dataValues.audiourl,
-				files: Student.dataValues.files,
-				createdAt: Student.dataValues.createdAt,
-			};
-		} catch (error) {
-			console.error(
-				`\n Error al intentar OBTENER los datos de "${charaname}" desde la tabla "students" \n`
-					.bgRed,
-				error,
-			);
-		}
+export async function getOneStudent(charaname: string): Promise<IStudent | []> {
+	try {
+		const chara = await Students.findOne({ where: { charaname } });
+		const Student: IStudent = {
+			charaName: chara?.dataValues.charaname,
+			name: chara?.dataValues.name,
+			lastName: chara?.dataValues.lastname,
+			school: chara?.dataValues.school,
+			role: chara?.dataValues.role,
+			combatClass: chara?.dataValues.combatclass,
+			weaponType: chara?.dataValues.weapontype,
+			age: chara?.dataValues.age,
+			birthday: chara?.dataValues.birthday,
+			height: chara?.dataValues.height,
+			hobbies: chara?.dataValues.hobbies,
+			designer: chara?.dataValues.designer,
+			illustrator: chara?.dataValues.illustrator,
+			voice: chara?.dataValues.voice,
+			releaseDate: chara?.dataValues.releasedate,
+			skinSet: chara?.dataValues.skinset,
+			pageUrl: chara?.dataValues.pageurl,
+			pageImageProfileUrl: chara?.dataValues.pageimageprofileurl,
+			pageImageFullUrl: chara?.dataValues.pageimagefullurl,
+			audioUrl: chara?.dataValues.audiourl,
+			files: chara?.dataValues.files,
+		};
+		return Student;
+	} catch (error) {
+		throw new Error(
+			`\n Error al intentar OBTENER los datos de "${charaname || 'undefined'}" desde la tabla "students" \n`,
+		);
 	}
 }
 
-export async function getAllStudents() {
+export async function getAllCharas(): Promise<IStudent[] | []> {
 	try {
 		const allStudents = await Students.findAll({
 			order: [['charaname', 'ASC']],
 		});
 
-		return allStudents.map((chara) => ({
+		const charas: IStudent[] = allStudents.map((chara) => ({
 			charaName: chara.dataValues.charaname,
 			name: chara.dataValues.name,
 			lastName: chara.dataValues.lastname,
@@ -97,7 +89,7 @@ export async function getAllStudents() {
 			illustrator: chara.dataValues.illustrator,
 			voice: chara.dataValues.voice,
 			releaseDate: chara.dataValues.releasedate,
-			skinSet: chara.skinset,
+			skinSet: chara.dataValues.skinset,
 			pageUrl: chara.dataValues.pageurl,
 			pageImageProfileUrl: chara.dataValues.pageimageprofileurl,
 			pageImageFullUrl: chara.dataValues.pageimagefullurl,
@@ -105,16 +97,17 @@ export async function getAllStudents() {
 			files: chara.dataValues.files,
 			createdAt: chara.dataValues.createdAt,
 		}));
+		return charas;
 	} catch (error) {
-		console.error(
-			'\n Error al intentar OBTENER todos los personajes de la tabla "students" \n'
-				.bgRed,
-			error,
+		throw new Error(
+			'\n Error al intentar OBTENER todos los personajes de la tabla "students" \n',
 		);
 	}
 }
 
-export async function getAllCharasName() {
+export async function getAllCharasName(): Promise<
+	{ charaName: string }[] | []
+> {
 	try {
 		const charaNames = await Students.findAll({
 			attributes: ['charaname'],
@@ -122,19 +115,18 @@ export async function getAllCharasName() {
 		});
 
 		return charaNames.map((charaname) => ({
-			charaName: charaname.dataValues.charaname,
+			charaName: charaname.dataValues.charaname as string,
 		}));
 	} catch (error) {
-		console.error(
+		throw new Error(
 			'\nError al Intentar OBTENER todos los "charaNames" de la tabla students\n',
-			error,
 		);
 	}
 }
 
-export async function getAllCharasWithoutFiles() {
+export async function getAllCharasWithoutFiles(): Promise<ICharaFiles[]> {
 	try {
-		const students = await Students.findAll({
+		const charas = await Students.findAll({
 			attributes: [
 				'charaname',
 				'name',
@@ -148,25 +140,24 @@ export async function getAllCharasWithoutFiles() {
 			order: [['charaname', 'ASC']],
 		});
 
-		return students.map((chara) => ({
-			charaName: chara.dataValues.charaname,
-			name: chara.dataValues.name,
-			school: chara.dataValues.school,
-			pageImageProfileUrl: chara.dataValues.pageimageprofileurl,
-			pageImageFullUrl: chara.dataValues.pageimagefullurl,
-			audioUrl: chara.dataValues.audiourl,
-			files: chara.dataValues.files,
+		return charas.map((chara) => ({
+			charaName: chara.dataValues.charaname as string,
+			name: chara.dataValues.name as string,
+			school: chara.dataValues.school as string,
+			pageImageProfileUrl: chara.dataValues.pageimageprofileurl as string,
+			pageImageFullUrl: chara.dataValues.pageimagefullurl as string,
+			audioUrl: chara.dataValues.audiourl as string,
+			files: chara.dataValues.files as boolean,
 		}));
 	} catch (error) {
-		console.error(
-			'\n ERROR al intentar OBTENER TODOS LOS PERSONAJES SIN ARCHIVOS \n'.bgRed,
-			error,
+		throw new Error(
+			'\n ERROR al intentar OBTENER TODOS LOS PERSONAJES SIN ARCHIVOS \n',
 		);
 	}
 }
 
 //UPDATE
-export async function updateOneChara(chara) {
+export async function updateOneChara(chara: IStudent): Promise<void> {
 	try {
 		await Students.update(
 			{
@@ -189,66 +180,61 @@ export async function updateOneChara(chara) {
 				pageurl: chara.pageUrl,
 				pageimageprofileurl: chara.pageImageProfileUrl,
 				pageimagefullurl: chara.pageImageFullUrl,
-				audiourl: chara.audioUrl
+				audiourl: chara.audioUrl,
 			},
 			{ where: { charaname: chara.charaName } },
 		);
-		console.log(`\n❤️  ${chara.charaName} Actualizada ❤️\n`.bgGreen);
+		console.log(`\n❤️  ${chara.charaName} Actualizada ❤️\n`);
 	} catch (error) {
-		console.error(
+		throw new Error(
 			`\nError al intentar ACTUALIZAR "${chara.charaName}" en postgreSQL"\n`,
-			error,
 		);
 	}
 }
 
-export async function charaFilesDownloaded(chara) {
+export async function charaFilesDownloaded(chara: ICharaFiles): Promise<void> {
 	try {
 		await Students.update(
 			{ files: true },
 			{ where: { charaname: chara.charaName, files: false } },
 		);
 		console.log(
-			`\n 💚 DESCARGADO TODOS LOS ARCHIVOS de "${chara.charaName}" 💚`.bgGreen +
-			'\n',
+			`\n 💚 DESCARGADO TODOS LOS ARCHIVOS de "${chara.charaName}" 💚\n`,
 		);
 	} catch (error) {
-		console.error(
-			`\n Error al intentar ACTUALIZAR FILES a TRUE de "${chara.charaName}" en postgreSQL" \n`
-				.bgRed,
-			error,
+		throw new Error(
+			`\n Error al intentar ACTUALIZAR FILES a TRUE de "${chara.charaName}" en postgreSQL" \n`,
 		);
 	}
 }
 
 //DELETE
-async function deleteOneChara(charaName, password) {
+async function deleteOneChara(
+	charaName: string,
+	password: string,
+): Promise<void> {
 	if (charaName && password === process.env.PASSWORD) {
 		try {
 			await Students.destroy({ where: { charaname: charaName } });
-			console.log(` 🖤 ${charaName} 🖤 `.bgBlack);
+			console.log(` 🖤 ${charaName} 🖤 `);
 		} catch (error) {
-			console.error(
-				`\n Error al intentar ELIMINAR ${charaName} de la tabla "students" \n`
-					.bgRed,
-				error,
+			throw new Error(
+				`\n Error al intentar ELIMINAR ${charaName} de la tabla "students" \n`,
 			);
 		}
 	}
 }
 
-async function deleteAllCharas(password) {
+async function deleteAllCharas(password: string): Promise<void> {
 	if (password === process.env.PASSWORD) {
 		try {
 			await Students.destroy({ truncate: true });
 			console.log(
-				'\n🖤 SE BORRRARON TODOS LOS REGISTROS DE LA TABLA "students" DE PostgreSQL 🖤\n'
-					.bgBlack,
+				'\n🖤 SE BORRRARON TODOS LOS REGISTROS DE LA TABLA "students" DE PostgreSQL 🖤\n',
 			);
 		} catch (error) {
-			console.error(
-				'\n Error al intentar ELIMINAR TODOS los registros de la tabla "students" \n'
-					.bgRed,
+			throw new Error(
+				'\n Error al intentar ELIMINAR TODOS los registros de la tabla "students" \n',
 			);
 		}
 	}

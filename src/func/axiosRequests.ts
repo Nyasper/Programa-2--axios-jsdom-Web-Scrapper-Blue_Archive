@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export async function getHtmlFromUrl(url) {
+export async function getHtmlFromUrl(url: string) {
 	try {
 		const { data } = await axios.get(url, {
 			headers: {
@@ -12,24 +12,24 @@ export async function getHtmlFromUrl(url) {
 		return data;
 	} catch (error) {
 		console.error(
-			`\n Error intentar hacer la Peticion Axios en la funcion getDATACharaInfo, EL PARAMETRO ES: ${url} \n`
-				.bgRed,
+			`\n Error intentar hacer la Peticion Axios en la funcion getDATACharaInfo, EL PARAMETRO ES: ${url} \n`,
+			error,
 		);
 	}
 }
 
-export async function getArchivesStream(url) {
+export async function getArchivesStream(url: string) {
 	try {
 		const { data } = await axios({
 			method: 'get',
 			url,
-			responseType: 'stream'
+			responseType: 'stream',
 		});
 		return data;
 	} catch (error) {
 		console.error(
-			`\n Error intentar hacer la Peticion Axios en la funcion  getArchivesStream con el parametro: ${url}\n `
-				.bgRed,
+			`\n Error intentar hacer la Peticion Axios en la funcion  getArchivesStream con el parametro: ${url}\n `,
+			error,
 		);
 	}
 }
