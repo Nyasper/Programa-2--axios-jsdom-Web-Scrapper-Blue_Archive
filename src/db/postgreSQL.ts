@@ -1,122 +1,51 @@
-import { Students, IStudent, ICharaFiles } from './studentsModel';
+import Student from './studentEntity';
+import Connect from './connection';
+import { scanManyCharas } from '../func/scanCharaInfo';
+import type { ICharaFile } from './studentEntity';
 
 //CREATE
-export const insertOneChara = async (chara: IStudent): Promise<void> => {
+async function insertOneStudent(chara: Partial<Student>): Promise<void> {
 	try {
-		await Students.create({
-			charaname: chara.charaName,
-			name: chara.name,
-			lastname: chara.lastName,
-			school: chara.school,
-			role: chara.role,
-			combatclass: chara.combatClass,
-			weapontype: chara.weaponType,
-			age: chara.age,
-			birthday: chara.birthday,
-			height: chara.height,
-			hobbies: chara.hobbies,
-			designer: chara.designer,
-			illustrator: chara.illustrator,
-			voice: chara.voice,
-			releasedate: chara.releaseDate,
-			skinset: chara.skinSet,
-			pageurl: chara.pageUrl,
-			pageimageprofileurl: chara.pageImageProfileUrl,
-			pageimagefullurl: chara.pageImageFullUrl,
-			audiourl: chara.audioUrl,
-		});
+		const student = Student.create(chara);
+		await student.save();
 
 		console.log(`\n💚 ${chara.charaName} 💚\n`);
 	} catch (error) {
 		throw new Error(`\n Error al INSERTAR insertar a: "${chara.charaName}" \n`);
 	}
-};
+}
 
-//READ
-export async function getOneStudent(charaname: string): Promise<IStudent | []> {
+export async function insertManyStudents(
+	students: Partial<Student>[],
+): Promise<void> {
 	try {
-		const chara = await Students.findOne({ where: { charaname } });
-		const Student: IStudent = {
-			charaName: chara?.dataValues.charaname,
-			name: chara?.dataValues.name,
-			lastName: chara?.dataValues.lastname,
-			school: chara?.dataValues.school,
-			role: chara?.dataValues.role,
-			combatClass: chara?.dataValues.combatclass,
-			weaponType: chara?.dataValues.weapontype,
-			age: chara?.dataValues.age,
-			birthday: chara?.dataValues.birthday,
-			height: chara?.dataValues.height,
-			hobbies: chara?.dataValues.hobbies,
-			designer: chara?.dataValues.designer,
-			illustrator: chara?.dataValues.illustrator,
-			voice: chara?.dataValues.voice,
-			releaseDate: chara?.dataValues.releasedate,
-			skinSet: chara?.dataValues.skinset,
-			pageUrl: chara?.dataValues.pageurl,
-			pageImageProfileUrl: chara?.dataValues.pageimageprofileurl,
-			pageImageFullUrl: chara?.dataValues.pageimagefullurl,
-			audioUrl: chara?.dataValues.audiourl,
-			files: chara?.dataValues.files,
-		};
-		return Student;
+		await Student.createQueryBuilder().insert().values(students).execute();
+		console.log(`\n💚 todos los personajes INSERTADOS 💚\n`);
 	} catch (error) {
-		throw new Error(
-			`\n Error al intentar OBTENER los datos de "${charaname || 'undefined'}" desde la tabla "students" \n`,
-		);
+		throw new Error(`\n Error al INSERTAR INSERTAR MUCHOS STUDENTS \n`);
 	}
 }
 
-export async function getAllCharas(): Promise<IStudent[] | []> {
+//READ
+export async function getAllStudents(): Promise<Student[]> {
 	try {
-		const allStudents = await Students.findAll({
-			order: [['charaname', 'ASC']],
-		});
-
-		const charas: IStudent[] = allStudents.map((chara) => ({
-			charaName: chara.dataValues.charaname,
-			name: chara.dataValues.name,
-			lastName: chara.dataValues.lastname,
-			school: chara.dataValues.school,
-			role: chara.dataValues.role,
-			combatClass: chara.dataValues.combatclass,
-			weaponType: chara.dataValues.weapontype,
-			age: chara.dataValues.age,
-			birthday: chara.dataValues.birthday,
-			height: chara.dataValues.height,
-			hobbies: chara.dataValues.hobbies,
-			designer: chara.dataValues.designer,
-			illustrator: chara.dataValues.illustrator,
-			voice: chara.dataValues.voice,
-			releaseDate: chara.dataValues.releasedate,
-			skinSet: chara.dataValues.skinset,
-			pageUrl: chara.dataValues.pageurl,
-			pageImageProfileUrl: chara.dataValues.pageimageprofileurl,
-			pageImageFullUrl: chara.dataValues.pageimagefullurl,
-			audioUrl: chara.dataValues.audiourl,
-			files: chara.dataValues.files,
-			createdAt: chara.dataValues.createdAt,
-		}));
-		return charas;
+		return await Student.find();
 	} catch (error) {
+		console.error(error);
 		throw new Error(
 			'\n Error al intentar OBTENER todos los personajes de la tabla "students" \n',
 		);
 	}
 }
 
-export async function getAllCharasName(): Promise<
-	{ charaName: string }[] | []
-> {
+export async function getAllStudentsCharaNames(): Promise<string[]> {
 	try {
-		const charaNames = await Students.findAll({
-			attributes: ['charaname'],
-			order: [['charaname', 'ASC']],
+		const students = await Student.find({
+			select: { charaName: true },
+			order: { charaName: 'ASC' },
 		});
-
-		return charaNames.map((charaname) => ({
-			charaName: charaname.dataValues.charaname as string,
-		}));
+		const charaNames: string[] = students.map((student) => student.charaName);
+		return charaNames;
 	} catch (error) {
 		throw new Error(
 			'\nError al Intentar OBTENER todos los "charaNames" de la tabla students\n',
@@ -124,31 +53,35 @@ export async function getAllCharasName(): Promise<
 	}
 }
 
-export async function getAllCharasWithoutFiles(): Promise<ICharaFiles[]> {
+export async function getAllStudentsWithoutFiles(): Promise<ICharaFile[]> {
 	try {
-		const charas = await Students.findAll({
-			attributes: [
-				'charaname',
-				'name',
-				'school',
-				'pageimageprofileurl',
-				'pageimagefullurl',
-				'audiourl',
-				'files',
-			],
+		const students = await Student.find({
+			select: {
+				charaName: true,
+				name: true,
+				school: true,
+				pageImageProfileUrl: true,
+				pageImageFullUrl: true,
+				audioUrl: true,
+				files: true,
+			},
 			where: { files: false },
-			order: [['charaname', 'ASC']],
+			order: { charaName: 'ASC' },
 		});
 
-		return charas.map((chara) => ({
-			charaName: chara.dataValues.charaname as string,
-			name: chara.dataValues.name as string,
-			school: chara.dataValues.school as string,
-			pageImageProfileUrl: chara.dataValues.pageimageprofileurl as string,
-			pageImageFullUrl: chara.dataValues.pageimagefullurl as string,
-			audioUrl: chara.dataValues.audiourl as string,
-			files: chara.dataValues.files as boolean,
-		}));
+		const studentsWithoutFiles: ICharaFile[] = students.map((student) => {
+			return {
+				charaName: student.charaName,
+				name: student.name,
+				school: student.school,
+				pageImageProfileUrl: student.pageImageProfileUrl,
+				pageImageFullUrl: student.pageImageFullUrl,
+				audioUrl: student.audioUrl,
+				files: student.files,
+			};
+		});
+
+		return studentsWithoutFiles;
 	} catch (error) {
 		throw new Error(
 			'\n ERROR al intentar OBTENER TODOS LOS PERSONAJES SIN ARCHIVOS \n',
@@ -156,67 +89,19 @@ export async function getAllCharasWithoutFiles(): Promise<ICharaFiles[]> {
 	}
 }
 
-//UPDATE
-export async function updateOneChara(chara: IStudent): Promise<void> {
-	try {
-		await Students.update(
-			{
-				charaname: chara.charaName,
-				name: chara.name,
-				lastname: chara.lastName,
-				school: chara.school,
-				role: chara.role,
-				combatclass: chara.combatClass,
-				weapontype: chara.weaponType,
-				age: chara.age,
-				birthday: chara.birthday,
-				height: chara.height,
-				hobbies: chara.hobbies,
-				designer: chara.designer,
-				illustrator: chara.illustrator,
-				voice: chara.voice,
-				releasedate: chara.releaseDate,
-				skinset: chara.skinSet,
-				pageurl: chara.pageUrl,
-				pageimageprofileurl: chara.pageImageProfileUrl,
-				pageimagefullurl: chara.pageImageFullUrl,
-				audiourl: chara.audioUrl,
-			},
-			{ where: { charaname: chara.charaName } },
-		);
-		console.log(`\n❤️  ${chara.charaName} Actualizada ❤️\n`);
-	} catch (error) {
-		throw new Error(
-			`\nError al intentar ACTUALIZAR "${chara.charaName}" en postgreSQL"\n`,
-		);
-	}
-}
-
-export async function charaFilesDownloaded(chara: ICharaFiles): Promise<void> {
-	try {
-		await Students.update(
-			{ files: true },
-			{ where: { charaname: chara.charaName, files: false } },
-		);
-		console.log(
-			`\n 💚 DESCARGADO TODOS LOS ARCHIVOS de "${chara.charaName}" 💚\n`,
-		);
-	} catch (error) {
-		throw new Error(
-			`\n Error al intentar ACTUALIZAR FILES a TRUE de "${chara.charaName}" en postgreSQL" \n`,
-		);
-	}
-}
-
 //DELETE
-async function deleteOneChara(
+async function deleteOneStudent(
 	charaName: string,
 	password: string,
 ): Promise<void> {
 	if (charaName && password === process.env.PASSWORD) {
 		try {
-			await Students.destroy({ where: { charaname: charaName } });
-			console.log(` 🖤 ${charaName} 🖤 `);
+			const response = await Student.delete({ charaName });
+			if (response.affected) {
+				console.log(` 🖤 ${charaName} 🖤 `);
+			} else {
+				console.log('Ningun Personaje Eliminado');
+			}
 		} catch (error) {
 			throw new Error(
 				`\n Error al intentar ELIMINAR ${charaName} de la tabla "students" \n`,
@@ -225,12 +110,13 @@ async function deleteOneChara(
 	}
 }
 
-async function deleteAllCharas(password: string): Promise<void> {
-	if (password === process.env.PASSWORD) {
+async function deleteAllStudents(password: string): Promise<void> {
+	if (password && password === process.env.PASSWORD) {
 		try {
-			await Students.destroy({ truncate: true });
+			const res = await Student.createQueryBuilder().delete().execute();
+
 			console.log(
-				'\n🖤 SE BORRRARON TODOS LOS REGISTROS DE LA TABLA "students" DE PostgreSQL 🖤\n',
+				`\n🖤 SE BORRRARON TODOS (${res.affected}) LOS REGISTROS DE LA TABLA "students" DE PostgreSQL 🖤\n`,
 			);
 		} catch (error) {
 			throw new Error(
@@ -239,3 +125,12 @@ async function deleteAllCharas(password: string): Promise<void> {
 		}
 	}
 }
+
+(async () => {
+	await Connect();
+	// await insertOneChara(await scanCharaInfo('Asuna_(Bunny_Girl)'));
+
+	// students.forEach((student) => console.log(student));
+
+	// const students = await getAllStudentsWithoutFiles();
+})();

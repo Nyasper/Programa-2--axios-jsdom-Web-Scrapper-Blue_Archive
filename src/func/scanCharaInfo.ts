@@ -22,11 +22,11 @@ import {
 	getPageImageFullUrl,
 	getAudioUrl,
 } from './getFunctions';
-import { IStudent } from '../db/studentsModel';
+import Student from '../db/studentEntity';
 
-export default async function scanCharaInfo(
+export async function scanCharaInfo(
 	charaNameParameter: string,
-): Promise<IStudent> {
+): Promise<Partial<Student>> {
 	try {
 		const document = await validateHtml(charaNameParameter);
 
@@ -63,7 +63,7 @@ export default async function scanCharaInfo(
 		);
 
 		const combatClass = getCombatClass(
-			await $selectText(
+			$selectText(
 				'#mw-content-text > div.mw-parser-output > table.wikitable.character > tbody > tr:nth-child(7) > td',
 			),
 		);
@@ -157,7 +157,6 @@ export default async function scanCharaInfo(
 			pageImageProfileUrl,
 			pageImageFullUrl,
 			audioUrl,
-			files: false,
 		};
 	} catch (error) {
 		console.error(
@@ -166,6 +165,15 @@ export default async function scanCharaInfo(
 		);
 		process.exit(1);
 	}
+}
+
+export async function scanManyCharas(
+	charaNamesList: string[],
+): Promise<Partial<Student>[]> {
+	const promises = charaNamesList.map(
+		async (charaName) => await scanCharaInfo(charaName),
+	);
+	return await Promise.all(promises);
 }
 
 const validateHtml = async (charaNameParameter: string): Promise<Document> => {
@@ -180,7 +188,3 @@ const validateHtml = async (charaNameParameter: string): Promise<Document> => {
 		`\nError al intentar obtener el "HTML" de "${charaNameParameter || 'undefined'}" en la funcion "validateHTML"\n`,
 	);
 };
-
-(async () => {
-	console.log(await scanCharaInfo('Shun_(Kid)'));
-})();

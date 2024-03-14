@@ -1,7 +1,12 @@
-import { STRING, BOOLEAN, INTEGER, DATEONLY } from 'sequelize';
-import { sequelize } from './sequelize';
-
-export const Students = sequelize.define(
+import {
+	PrimaryGeneratedColumn,
+	Entity,
+	Column,
+	CreateDateColumn,
+	BaseEntity,
+} from 'typeorm';
+/*
+export const Students = connection.define(
 	'students',
 	{
 		charaname: {
@@ -105,14 +110,87 @@ export interface IStudent {
 	files: boolean;
 }
 
-export interface ICharaFiles {
+Students.sync();
+*/
+
+export interface ICharaFile {
 	charaName: string;
 	name: string;
 	school: string;
-	pageImageProfileUrl: string;
-	pageImageFullUrl: string;
-	audioUrl: string;
+	pageImageProfileUrl: string | undefined;
+	pageImageFullUrl: string | undefined;
+	audioUrl: string | undefined;
 	files: boolean;
 }
 
-Students.sync();
+@Entity('students')
+export default class Student extends BaseEntity {
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Column({ unique: true })
+	charaName: string;
+
+	@Column()
+	name: string;
+
+	@Column()
+	lastName: string;
+
+	@Column()
+	school: string;
+
+	@Column()
+	role: string;
+
+	@Column()
+	combatClass: string;
+
+	@Column()
+	weaponType: string;
+
+	@Column({ nullable: true })
+	age?: number;
+
+	@Column({ nullable: true })
+	birthday?: string;
+
+	@Column({ nullable: true })
+	height?: number;
+
+	@Column()
+	hobbies: string;
+
+	@Column({ nullable: true })
+	designer?: string;
+
+	@Column({ nullable: true })
+	illustrator?: string;
+
+	@Column()
+	voice: string;
+
+	@Column()
+	releaseDate: string;
+
+	@Column()
+	skinSet: string;
+
+	@Column()
+	pageUrl: string;
+
+	@Column({ nullable: true })
+	pageImageProfileUrl?: string;
+
+	@Column({ nullable: true })
+	pageImageFullUrl?: string;
+
+	@Column({ nullable: true })
+	audioUrl?: string;
+
+	@Column({ default: false })
+	files: boolean;
+
+	@CreateDateColumn()
+	createdAt: Date;
+}

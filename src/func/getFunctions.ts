@@ -29,29 +29,29 @@ export const getCombatClass = (combatClass: string): string => combatClass;
 
 export const getWeaponType = (weaponType: string): string => weaponType;
 
-export const getAge = (age: string): number | null => {
+export const getAge = (age: string): number | undefined => {
 	if (!isNaN(parseInt(age))) {
 		return parseInt(age);
 	}
-	return null;
+	return undefined;
 };
 
-export const getBirthday = (birthday: string): string | null => {
+export const getBirthday = (birthday: string): string | undefined => {
 	if (birthday === '-') {
-		return null;
+		return undefined;
 	}
 	return birthday;
 };
 
-export const getHeight = (height: string): number | null => {
+export const getHeight = (height: string): number | undefined => {
 	if (height.includes('cm')) {
 		let newHeight = height.split('cm')[0];
 		if (!isNaN(parseInt(newHeight))) {
 			return parseInt(newHeight);
 		}
-		return null;
+		return undefined;
 	}
-	return null;
+	return undefined;
 };
 
 export const getHobbies = (hobbies: string) => {
@@ -61,16 +61,16 @@ export const getHobbies = (hobbies: string) => {
 	return hobbies;
 };
 
-export const getDesigner = (designer: string): string | null => {
+export const getDesigner = (designer: string): string | undefined => {
 	if (designer === '-') {
-		return null;
+		return undefined;
 	}
 	return designer.replaceAll(' ', '_').trim();
 };
 
-export const getIllustrator = (illustrator: string): string | null => {
+export const getIllustrator = (illustrator: string): string | undefined => {
 	if (illustrator === '-') {
-		return null;
+		return undefined;
 	}
 	return illustrator.replaceAll(' ', '_').trim();
 };
@@ -94,13 +94,13 @@ export const getSkinSet = (charaName: string): string => {
 		console.error(`\nERROR al intentar obtener "skinSet" de "${charaName}"\n`);
 	}
 
-	return 'original';
+	return 'default';
 };
 
 export const getPageImageProfileUrl = (
 	document: Document,
 	charaName: string,
-): string | null => {
+): string | undefined => {
 	try {
 		const images = Array.from(document.querySelectorAll('img'));
 		const pageImageProfile = images.find(
@@ -118,7 +118,7 @@ export const getPageImageProfileUrl = (
 			`\nError en la funcion "getPageImageProfileUrl" de: "${charaName}"\n`,
 			error,
 		);
-		return null;
+		return undefined;
 	}
 };
 
@@ -126,7 +126,7 @@ export const getPageImageFullUrl = async (
 	document: Document,
 	charaName: string,
 	skinSet: string,
-): Promise<string | null> => {
+): Promise<string | undefined> => {
 	try {
 		const images = Array.from(document.querySelectorAll('img'));
 
@@ -169,7 +169,7 @@ export const getPageImageFullUrl = async (
 			`\nError en la funcion "getPageImageFullUrl" de: "${charaName}"\n`,
 			error,
 		);
-		return null;
+		return undefined;
 	}
 };
 

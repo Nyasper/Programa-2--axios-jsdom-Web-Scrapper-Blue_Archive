@@ -1,19 +1,22 @@
-import scanCharaList from './scanCharaList';
-import { charaList } from './scanCharaList.js';
-import { getAllCharasName } from '../db/postgreSQL';
-import { searchDifferences } from './utils';
+import { scanCharaListOnlyCharaNames } from './scanCharaList';
+import type { ICharaList } from './scanCharaList.js';
+import { getAllStudentsCharaNames } from '../db/postgreSQL';
+import { searchCharaNamesDifferences, charaDomain } from './utils';
 
-export default async function searchUpdates(): Promise<charaList[]> {
+export default async function searchUpdates(): Promise<string[]> {
 	console.log(`\n Buscando actualizaciones de nuevos Personajes... \n\n`);
 	try {
-		const pageCharaList = await scanCharaList(); //💗Lista de personajes en la pagina💗
-		const postgreSQLCharaList = await getAllCharasName();
+		const pageCharaList = await scanCharaListOnlyCharaNames(); //💗Lista de personajes en la pagina💗
+		const postgreSQLCharaList = await getAllStudentsCharaNames();
 
-		const Actualizar = searchDifferences(pageCharaList, postgreSQLCharaList);
+		const Actualizar = searchCharaNamesDifferences(
+			pageCharaList,
+			postgreSQLCharaList,
+		);
 
 		if (Actualizar.length > 0) {
-			Actualizar.forEach((chara) => {
-				console.log(`💙 ${chara.charaName} 💙 ${chara.url}`);
+			Actualizar.forEach((charaName) => {
+				console.log(`💙 ${charaName} 💙 ${charaDomain(charaName)}`);
 			});
 			console.log(
 				`\n💙 ${Actualizar.length} personajes disponibles para guardar 💙\n\n`,
@@ -30,7 +33,3 @@ export default async function searchUpdates(): Promise<charaList[]> {
 		);
 	}
 }
-
-(async () => {
-	console.log(await searchUpdates());
-})();

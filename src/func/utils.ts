@@ -1,9 +1,11 @@
 export const domain = 'https://bluearchive.wiki/';
+export const charaDomain = (charaName: string) => domain + charaName;
 
-export function searchDifferences(mainArray: any[], secondaryArray: any[]) {
-	const diff = mainArray.filter(
-		(main) =>
-			!secondaryArray.some((second) => second.charaName === main.charaName),
+export function searchCharaNamesDifferences(
+	mainArray: string[],
+	secondaryArray: string[],
+): string[] {
+	return mainArray.filter(
+		(main) => !secondaryArray.some((second) => main === second),
 	);
-	return diff;
 }

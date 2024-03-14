@@ -2,13 +2,13 @@ import { getHtmlFromUrl } from './axiosRequests';
 import { JSDOM } from 'jsdom';
 import { domain } from './utils';
 
-export interface charaList {
+export interface ICharaList {
 	charaName: string;
 	img: string;
 	url: string;
 }
 
-export default async function scanCharaList(): Promise<charaList[]> {
+export async function scanCharaList(): Promise<ICharaList[]> {
 	try {
 		const charaList = await scanList();
 		return charaList;
@@ -21,8 +21,21 @@ export default async function scanCharaList(): Promise<charaList[]> {
 	}
 }
 
-async function scanList(): Promise<charaList[]> {
-	const charaList: charaList[] = [];
+export async function scanCharaListOnlyCharaNames(): Promise<string[]> {
+	try {
+		const charaList = await scanList();
+		return charaList.map((charaListItem) => charaListItem.charaName);
+	} catch (error) {
+		console.error(
+			'\n Se a producido un error en la funcion "scanCharaListOnlyCharaNames()".\n',
+			error,
+		);
+		process.exit(1);
+	}
+}
+
+async function scanList(): Promise<ICharaList[]> {
+	const charaList: ICharaList[] = [];
 
 	const charaUl = await getCharaListUl();
 	const totalChara = getTotalChara(charaUl);

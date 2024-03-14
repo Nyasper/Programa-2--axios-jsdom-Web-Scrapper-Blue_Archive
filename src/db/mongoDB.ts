@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 const rutaActual = __dirname;
 
 dotenv.config({ path: `${rutaActual}/.env` });
-import { IStudent } from './studentsModel';
+import { IStudent } from './studentEntity';
 
 //Student Schema
 const studentSchema = new Schema(

@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { getArchivesStream } from './axiosRequests';
-import { ICharaFiles } from '../db/studentsModel';
+import { ICharaFiles } from '../db/studentEntity';
 
 // const rutaActual = path.dirname(fileURLToPath(import.meta.url));
 const rutaActual = __dirname;

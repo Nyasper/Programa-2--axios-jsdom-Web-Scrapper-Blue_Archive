@@ -1,7 +1,7 @@
 import downloadFiles from './func/downloadFiles';
 import searchFilesUpdates from './func/searchFilesUpdates';
 // import { charaFilesDownloaded } from './db/postgreSQL';
-import { ICharaFiles } from './db/studentsModel';
+import { ICharaFiles } from './db/studentEntity';
 
 export default async function descargar_archivos_personajes() {
 	try {
