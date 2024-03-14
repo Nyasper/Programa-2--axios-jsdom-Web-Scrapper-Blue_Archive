@@ -1,6 +1,6 @@
 import Student from './studentEntity';
 import Connect from './connection';
-import { scanManyCharas } from '../func/scanCharaInfo';
+import { scanCharaInfo } from '../func/scanCharaInfo';
 import type { ICharaFile } from './studentEntity';
 
 //CREATE
@@ -89,6 +89,16 @@ export async function getAllStudentsWithoutFiles(): Promise<ICharaFile[]> {
 	}
 }
 
+//UPDATE
+export async function studentFilesDownloaded(charaName: string) {
+	try {
+		await Student.update({ charaName }, { files: true });
+		console.log(` ❤️  ${charaName} files downloaded ❤️\n`);
+	} catch (error) {
+		throw error;
+	}
+}
+
 //DELETE
 async function deleteOneStudent(
 	charaName: string,
@@ -125,12 +135,3 @@ async function deleteAllStudents(password: string): Promise<void> {
 		}
 	}
 }
-
-(async () => {
-	await Connect();
-	// await insertOneChara(await scanCharaInfo('Asuna_(Bunny_Girl)'));
-
-	// students.forEach((student) => console.log(student));
-
-	// const students = await getAllStudentsWithoutFiles();
-})();

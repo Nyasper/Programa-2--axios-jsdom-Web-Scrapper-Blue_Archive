@@ -1,5 +1,5 @@
 import {
-	PrimaryGeneratedColumn,
+	PrimaryColumn,
 	Entity,
 	Column,
 	CreateDateColumn,
@@ -125,10 +125,7 @@ export interface ICharaFile {
 
 @Entity('students')
 export default class Student extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@Column({ unique: true })
+	@PrimaryColumn()
 	charaName: string;
 
 	@Column()
