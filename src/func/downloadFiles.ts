@@ -1,13 +1,13 @@
 import path from 'path';
 import fs from 'fs';
 import { getArchivesStream } from './axiosRequests';
-import { ICharaFiles } from '../db/studentEntity';
+import type { ICharaFile } from '../db/studentEntity';
 
 // const rutaActual = path.dirname(fileURLToPath(import.meta.url));
 const rutaActual = __dirname;
 const dirMedia = path.join(rutaActual, '..', '..', 'media'); // carpeta /media en la ruta raiz '/' del proyecto
 
-export default async function downloadFiles(chara: ICharaFiles): Promise<void> {
+export default async function downloadFiles(chara: ICharaFile): Promise<void> {
 	const dirSchool = path.join(dirMedia, chara.school); // carpeta /${schoolName} dentro de /media, SE UTILIZA PARA CREAR LOS DIRECTORIOS SI NO EXISTEN
 	const carpDest = path.join(dirMedia, chara.school, chara.charaName); // ruta completa del destino del archivo: /media/${schoolName}/${charaName} + ${format}
 
@@ -35,17 +35,17 @@ async function createMediaFolder(
 	}
 }
 
-const downloadImageProfile = async (chara: ICharaFiles, carpDest: string) =>
+const downloadImageProfile = async (chara: ICharaFile, carpDest: string) =>
 	await download(chara, carpDest, '.png');
 
-const downloadImageFull = async (chara: ICharaFiles, carpDest: string) =>
+const downloadImageFull = async (chara: ICharaFile, carpDest: string) =>
 	await download(chara, carpDest, '_full.png');
 
-const downloadAudio = async (chara: ICharaFiles, carpDest: string) =>
+const downloadAudio = async (chara: ICharaFile, carpDest: string) =>
 	await download(chara, carpDest, '.ogg');
 
 async function download(
-	chara: ICharaFiles,
+	chara: ICharaFile,
 	carpDest: string,
 	format: Format,
 ): Promise<void> {
@@ -74,11 +74,11 @@ async function download(
 	}
 }
 
-const getFileUrl = (chara: ICharaFiles, format: Format): string | null => {
+const getFileUrl = (chara: ICharaFile, format: Format): string | undefined => {
 	if (format === '.png') return chara.pageImageProfileUrl;
 	else if (format === '_full.png') return chara.pageImageFullUrl;
 	else if (format === '.ogg') return chara.audioUrl;
-	return null;
+	return undefined;
 };
 
 type Format = '.png' | '_full.png' | '.ogg';
